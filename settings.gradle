@@ -1,0 +1,6 @@
+rootProject.name = "MetatransApps_Android_LIB_CommonsAds"
+
+include ':app'
+include ':MetatransApps_Android_LIB_Commons'
+
+project(':MetatransApps_Android_LIB_Commons').projectDir = new File('./../MetatransApps_Android_LIB_Commons/app')
