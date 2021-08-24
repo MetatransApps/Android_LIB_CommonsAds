@@ -297,7 +297,7 @@ public class AdsManager {
 			
 			adsContainers.remove(homeAdIndex);
 
-			AdData homeAdsData = adsData_interstitial.getAdData(IAdsProviders.ID_HOME_ADS);
+			AdData homeAdsData = adsData_banner.getAdData(IAdsProviders.ID_HOME_ADS);
 
 			if (homeAdsData.getClicksCount() <= 3) {
 				adsContainers.add(0, homeAds_Container);
