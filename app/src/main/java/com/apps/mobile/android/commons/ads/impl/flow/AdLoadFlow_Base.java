@@ -303,8 +303,11 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 						
 						nextRetry();
 						
-					} catch(Exception e) {
-						e.printStackTrace();
+					} catch(Throwable t) {
+						//Print the error and continue with the next Ads container
+						t.printStackTrace();
+
+						loadFailed();
 					}
 				} else {
 					System.out.println("AdLoadFlow_Base: Retry Job: NOT EXECUTED, because: current_retry_job=" + current_retry_job + ", stoped=" + stoped + ", isActive()=" + isActive());

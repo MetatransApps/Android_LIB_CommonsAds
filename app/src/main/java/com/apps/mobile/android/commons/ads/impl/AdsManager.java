@@ -297,7 +297,7 @@ public class AdsManager {
 			
 			adsContainers.remove(homeAdIndex);
 
-			AdData homeAdsData = adsData_banner.getAdData(IAdsProviders.ID_HOME_ADS);
+			AdData homeAdsData = adsData_interstitial.getAdData(IAdsProviders.ID_HOME_ADS);
 
 			if (homeAdsData.getClicksCount() <= 3) {
 				adsContainers.add(0, homeAds_Container);
@@ -335,7 +335,12 @@ public class AdsManager {
 		
 		List<IAdsContainer> containers = containers_sequance.getAdsContainers();
 		for (IAdsContainer container: containers) {
-			container.initInterstitial(flow);
+			try {
+				container.initInterstitial(flow);
+			} catch (Throwable t) {
+				//Print the error and continue with what we have as containers
+				t.printStackTrace();
+			}
 		}
 		
 		return flow;
