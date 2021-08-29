@@ -29,6 +29,6 @@ android {
 
 dependencies {
 
-    implementation project(":MetatransApps_Android_LIB_Commons")
+    implementation project(":Android_LIB_Commons")
 
 }
