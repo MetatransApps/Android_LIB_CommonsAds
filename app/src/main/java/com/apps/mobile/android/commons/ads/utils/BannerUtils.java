@@ -1,8 +1,6 @@
 package com.apps.mobile.android.commons.ads.utils;
 
 
-import com.apps.mobile.android.commons.ads.R;
-
 import android.content.Context;
 import android.view.View;
 import android.widget.LinearLayout;

@@ -7,11 +7,9 @@ import java.util.Map;
 import com.apps.mobile.android.commons.ads.impl.flow.AdLoadFlow_Banner;
 import com.apps.mobile.android.commons.ads.impl.flow.AdLoadFlow_Interstitial;
 import com.apps.mobile.android.commons.ads.utils.BannerUtils;
-import com.apps.mobile.android.commons.app.Application_Base_Ads;
 
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 

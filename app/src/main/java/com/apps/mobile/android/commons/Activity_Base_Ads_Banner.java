@@ -5,7 +5,6 @@ import com.apps.mobile.android.commons.ads.impl.flow.IAdLoadFlow;
 import com.apps.mobile.android.commons.app.Application_Base;
 import com.apps.mobile.android.commons.app.Application_Base_Ads;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.ViewGroup;

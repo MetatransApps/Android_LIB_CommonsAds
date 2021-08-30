@@ -8,7 +8,6 @@ import com.apps.mobile.android.commons.R;
 import com.apps.mobile.android.commons.ads.impl.flow.IAdLoadFlow;
 import com.apps.mobile.android.commons.app.Application_Base;
 import com.apps.mobile.android.commons.cfg.colours.IConfigurationColours;
-import com.apps.mobile.android.commons.loading.Activity_Loading_Base;
 
 
 public abstract class Activity_Loading_Base_Ads extends Activity_Loading_Base {

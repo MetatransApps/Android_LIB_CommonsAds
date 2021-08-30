@@ -21,11 +21,8 @@ import com.apps.mobile.android.commons.ads.impl.sequence.IAdsContainerSequence;
 import com.apps.mobile.android.commons.ads.impl.stat.AdStorageUtils;
 import com.apps.mobile.android.commons.ads.impl.stat.model.AdData;
 import com.apps.mobile.android.commons.ads.impl.stat.model.AdsData;
-import com.apps.mobile.android.commons.app.Application_Base;
 import com.apps.mobile.android.commons.app.Application_Base_Ads;
-import com.apps.mobile.android.commons.events.EventsData_Base;
 
-import android.app.AlarmManager;
 import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
