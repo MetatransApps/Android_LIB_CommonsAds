@@ -1,0 +1,223 @@
+package org.metatransapps.commons.engagement;
+
+
+import org.metatransapps.commons.ads.R;
+import com.google.android.gms.plus.PlusOneButton;
+
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.RectF;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+
+
+public class View_Social_GooglePlus1_Web extends View implements OnTouchListener {
+	
+	
+	private boolean initialized;
+	
+	private RectF rectangle_button;
+	
+	private WebView button;
+	
+	
+	public View_Social_GooglePlus1_Web(Context context, RectF _rectf_main) {
+		
+		super(context);
+		
+		System.out.println("View_Social_GooglePlus1: constructor _rectf_main=" + _rectf_main);
+		
+		rectangle_button 	= _rectf_main;
+		
+		//View view = LayoutInflater.from(context).inflate(R.layout.googleplus1_button, null);
+		
+		//provider 			= _provider;
+		
+		//coloursCfg 			= _coloursCfg;
+		
+		//paint_background 	= new Paint();
+		
+		setOnTouchListener(this);
+		
+		button = new WebView(context);
+		//button.setWebChromeClient(new WebChromeClient());
+		button.getSettings().setJavaScriptEnabled(true);
+		
+		button.loadUrl("file:///android_asset/Google_plus1.html");
+	}
+	
+	
+	public PlusOneButton getButton() {
+		return new PlusOneButton(getContext());
+	}
+	
+	
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		
+		//System.out.println("View_Social_GooglePlus1: onMeasure initialized=" + initialized + ", rectangle_button=" + rectangle_button);
+		
+		if (!initialized) {
+			
+			//String text = " " + getContext().getString(R.string.label_invite) + " ";
+			
+			/*buttonarea_button =  new ButtonAreaClick(rectangle_button, text,
+					//coloursCfg.getColour_Delimiter(), coloursCfg.getColour_Square_White(), coloursCfg.getColour_Square_ValidSelection());
+					coloursCfg.getColour_Square_ValidSelection(),
+					coloursCfg.getColour_Square_Black(),
+					coloursCfg.getColour_Square_MarkingSelection());
+			*/
+			initialized = true;
+			
+			//button = new PlusOneButton(getContext());
+			
+			//button.setSize(PlusOneButton.SIZE_STANDARD);
+			//button.setAnnotation(PlusOneButton.ANNOTATION_BUBBLE);
+			
+			//params = new LinearLayout.LayoutParams(
+			//		LinearLayout.LayoutParams.WRAP_CONTENT,
+			//		LinearLayout.LayoutParams.WRAP_CONTENT);
+			
+			//button.setLayoutParams(params);
+			
+			
+			//addView(button);
+			
+			/*setLeft((int)rectangle_button.left);
+			setRight((int)rectangle_button.right);
+			setTop((int)rectangle_button.top);
+			setBottom((int)rectangle_button.bottom);
+			setMeasuredDimension((int)(rectangle_button.right - rectangle_button.left), (int)(rectangle_button.bottom - rectangle_button.top));
+			
+			button.setLeft((int)rectangle_button.left);
+			button.setRight((int)rectangle_button.right);
+			button.setTop((int)rectangle_button.top);
+			button.setBottom((int)rectangle_button.bottom);
+			*/
+			//setMeasuredDimension((int)(rectangle_button.right - rectangle_button.left), (int)(rectangle_button.bottom - rectangle_button.top));
+			
+			
+
+		}
+		
+		//System.out.println("View_Social_InviteFriends: onMeasure out");
+	}
+	
+	
+	@Override
+	protected void onDraw(Canvas canvas) {
+		
+		super.onDraw(canvas);
+		
+		drawFromViewToCanvas(button, rectangle_button, canvas);
+		
+	}
+	
+	
+	public void drawFromViewToCanvas(final View view, final RectF rect, final Canvas canvas) {
+	    final int widthSpec = View.MeasureSpec.makeMeasureSpec((int) rect.width(), View.MeasureSpec.EXACTLY);
+	    final int heightSpec = View.MeasureSpec.makeMeasureSpec((int) rect.height(), View.MeasureSpec.EXACTLY);
+	    view.measure(widthSpec, heightSpec);
+	    // Lay the view out with the known dimensions
+	    view.layout(0, 0, (int) rect.width(), (int) rect.height());
+	    // Translate the canvas so the view is drawn at the proper coordinates
+	    canvas.save();
+	    canvas.translate(rect.left, rect.top);
+	    // Draw the View and clear the translation
+	    view.draw(canvas);
+	    canvas.restore();
+	}
+	
+	
+	private boolean isOverButton(float x, float y) {
+		return rectangle_button.contains(x, y);
+	}
+	
+	
+	@Override
+	public boolean onTouch(View view, MotionEvent event) {
+		
+		//if (true) return false;
+		
+		//System.out.println("View_Social_GooglePlus1: onTouch rectangle_button=" + rectangle_button + ", rectangle_button.left" + rectangle_button.left + ", rectangle_button.top" + rectangle_button.top );
+		
+		//System.out.println("View_Social_InviteFriends: onTouch ");
+		
+		float x = event.getX();
+		float y = event.getY();
+		
+		
+		//return button.dispatchTouchEvent(event);
+		
+		if (!rectangle_button.contains(x, y)) {
+			
+			//buttonarea_button.deselect();
+			
+			invalidate();
+			
+			return false;
+			
+		} else {
+			
+			//System.out.println("View_Social_GooglePlus1: onTouch -> performClick");
+			
+			//Toast_Base.showToast_InCenter(getContext(), "dispatchTouchEvent");
+			
+			event.setLocation(getButton().getLeft() + 1, getButton().getTop() + 1);
+			boolean processed = button.dispatchTouchEvent(event);
+			
+			invalidate();
+			
+			return processed;
+		}
+	}
+	
+	
+	private void processEvent_DOWN(MotionEvent event) {
+		
+		float x = event.getX();
+		float y = event.getY();
+		
+		if (isOverButton(x, y)) {
+			
+			//buttonarea_button.select();
+
+		}
+	}
+	
+	
+	private void processEvent_MOVE(MotionEvent event) {
+		
+		float x = event.getX();
+		float y = event.getY();
+		
+		if (isOverButton(x, y)) {
+			
+			//buttonarea_button.select();
+
+		} else {
+			
+			//buttonarea_button.deselect();
+		}
+	}
+	
+	
+	private void processEvent_UP(MotionEvent event) {
+		
+		float x = event.getX();
+		float y = event.getY();
+		
+		//buttonarea_button.deselect();
+		
+		if (isOverButton(x, y)) {
+			
+			//provider.openInviteDialog();
+		}
+	}
+}
