@@ -9,5 +9,5 @@ Of course, you still need to add this 3th party libs in order to use Ads from th
 Which Ads to use or not use, could be easily configured in the project, which builds the final APK file.
 
 # Example of configuration
-  - https://github.com/bagaturchess/MetatransApps_Android_APK_2DBalloons/blob/master/app/src/main/java/com/stoptheballs/app/Application_StopTheBalls_APK.java
-  - https://github.com/bagaturchess/MetatransApps_Android_APK_2DBalloons/blob/master/app/src/main/java/com/stoptheballs/cfg/ads/AdsConfigurations_StopTheBalls.java
+  - https://github.com/MetatransApps/Android_APK_2DBalloons/blob/master/app/src/main/java/com/stoptheballs/app/Application_2DBalloons.java
+  - https://github.com/MetatransApps/Android_APK_2DBalloons/blob/master/app/src/main/java/com/stoptheballs/cfg/ads/AdsConfigurations_StopTheBalls.java
