@@ -1,0 +1,1163 @@
+/**
+ * Copyright 2013 Google Inc. All Rights Reserved.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+package org.metatrans.commons.engagement;
+
+
+import org.metatrans.commons.Activity_Base;
+import org.metatrans.commons.DeviceUtils;
+import org.metatrans.commons.ads.R;
+import org.metatrans.commons.app.Application_Base;
+import org.metatrans.commons.cfg.achievements.IConfigurationAchievements;
+import org.metatrans.commons.cfg.colours.IConfigurationColours;
+import org.metatrans.commons.engagement.ILeaderboardsProvider;
+import org.metatrans.commons.engagement.ISocialProvider;
+import org.metatrans.commons.engagement.leaderboards.IViewActivator;
+import org.metatrans.commons.engagement.leaderboards.ViewActivator_Enabled;
+import org.metatrans.commons.engagement.leaderboards.View_Achievements_And_Leaderboards_GoogleImpl;
+import org.metatrans.commons.engagement.social.View_Social_SignIn_GoogleImpl;
+import org.metatrans.commons.events.api.IEvent_Base;
+import org.metatrans.commons.events.api.IEventsManager;
+import org.metatrans.commons.ui.Toast_Base;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.games.Games;
+import com.google.android.gms.games.GamesStatusCodes;
+import com.google.android.gms.games.achievement.Achievement;
+import com.google.android.gms.games.achievement.AchievementBuffer;
+import com.google.android.gms.games.achievement.Achievements;
+import com.google.android.gms.plus.People;
+import com.google.android.gms.plus.People.LoadPeopleResult;
+import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.PlusClient;
+import com.google.android.gms.plus.PlusShare;
+import com.google.android.gms.plus.model.moments.ItemScope;
+import com.google.android.gms.plus.model.moments.Moment;
+import com.google.android.gms.plus.model.people.Person;
+import com.google.android.gms.plus.model.people.PersonBuffer;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.PendingIntent;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentSender.SendIntentException;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.RectF;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+
+/**
+ * Android Google+ Quickstart activity.
+ *
+ * Demonstrates Google+ Sign-In and usage of the Google+ APIs to retrieve a
+ * users profile information.
+ */
+public class EngagementProvider_Google implements ISocialProvider, ILeaderboardsProvider, IAchievementsProvider,
+    ConnectionCallbacks, OnConnectionFailedListener,
+    ResultCallback<People.LoadPeopleResult> {
+	
+	
+  private static final String TAG = EngagementProvider_Google.class.getName();
+  
+  //private static int INVITE_DIALOG_ID = 0;
+  
+  private static final int VIEWID_SIGNIN = 346765879;
+  private static final int VIEWID_LEADERBOARDS = 33534555;
+  private static final int VIEWID_LIKE = 736493269;
+  
+  private static final int REQUEST_ACHIEVEMENTS = 179;
+  private static final int REQUEST_LIKE 		= 111;
+  
+  // GoogleApiClient wraps our service connection to Google Play services and
+  // provides access to the users sign in state and Google's APIs.
+  private GoogleApiClient mGoogleApiClient;
+
+  // We use mSignInProgress to track whether user has clicked sign in.
+  // mSignInProgress can be one of three values:
+  //
+  //       STATE_DEFAULT: The default state of the application before the user
+  //                      has clicked 'sign in', or after they have clicked
+  //                      'sign out'.  In this state we will not attempt to
+  //                      resolve sign in errors and so will display our
+  //                      Activity in a signed out state.
+  //       STATE_SIGNED_IN: This state indicates that the user has clicked 'sign
+  //                      in', so resolve successive errors preventing sign in
+  //                      until the user has successfully authorized an account
+  //                      for our app.
+  //   STATE_IN_PROGRESS: This state indicates that we have started an intent to
+  //                      resolve an error, and so we should not start further
+  //                      intents until the current intent completes.
+  private int mSignInProgress;
+  
+  // Used to store the PendingIntent most recently returned by Google Play
+  // services until the user clicks 'sign in'.
+  private PendingIntent mSignInIntent;
+
+  // Used to store the error code most recently returned by Google Play services
+  // until the user clicks 'sign in'.
+  private int mSignInError;
+
+  //private ListView mCirclesListView;
+  //private ArrayAdapter<String> mCirclesAdapter;
+  //private ArrayList<String> mCirclesList;
+
+  private Application_Base app;
+  private View view_signin;
+  private View view_achievements_and_leaderboards;
+  private View_Social_GooglePlus1_Code view_like;
+  
+  private Bitmap userIcon;
+  private Handler uiHandler;
+  
+  private boolean signInRejected = false;
+  
+  private IMapping_Mode2Leaderboard mapping_mode2leaderboard;
+  
+  private int leaderboard_requested_withmode_id;
+  private boolean achievements_requested_flag;
+  
+  private List<Person> friends;
+  private PersonBuffer personBuffer;
+  
+  private Class<? extends Activity_Base> activityClass_Result;
+	
+  private boolean enabled;
+	
+	
+  public EngagementProvider_Google(Application_Base _app, IMapping_Mode2Leaderboard _mapping_mode2leaderboard, Class<? extends Activity_Base> _activityClass_Result) {
+	  
+	  app = _app;
+	    
+	  mapping_mode2leaderboard = _mapping_mode2leaderboard;
+	  
+	  activityClass_Result = _activityClass_Result;
+	  
+	  //LayoutInflater inflater = (LayoutInflater)app.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	  //root_view = inflater.inflate(R.layout.main_activity, null);
+	  
+	  //createView();
+	  
+	  
+	  uiHandler = new Handler(Looper.getMainLooper());
+	  
+	  friends = new ArrayList<Person>();
+	  
+	  init();
+  }
+  
+  /*
+  @Override
+  public void attachView(ViewGroup frame) {
+	  
+	  root_view.destroyDrawingCache();
+	  createView();
+	  
+		View old = frame.findViewById(viewid);
+		if (old != null) {
+			frame.removeView(old);
+		}
+		
+		frame.addView(root_view);
+  }
+
+	private void createView() {
+		IConfigurationColours coloursCfg = ConfigurationUtils_Colours.getConfigByID(IConfigurationColours.CFG_COLOUR_GREEN_WARM);
+		root_view = new View_Social_SignIn_GoogleImpl(app, this, coloursCfg);
+		root_view.setId(viewid);
+	}
+	*/
+	
+  private void init() {
+	  
+	System.out.println("SocialProvider_Google: init");
+	  
+    //mCirclesListView = (ListView) root_view.findViewById(R.id.circles_list);
+
+    //mCirclesList = new ArrayList<String>();
+    //mCirclesAdapter = new ArrayAdapter<String>(app, R.layout.circle_member, mCirclesList);
+    //mCirclesListView.setAdapter(mCirclesAdapter);
+    
+    setState(ISocialProvider.STATE_DEFAULT);
+    
+    mGoogleApiClient = buildGoogleApiClient();
+    
+    app.getExecutor().execute(new Runnable() {
+		
+		@Override
+		public void run() {
+			
+			long last_connect_attempt = 0;
+			
+			while (true) {
+				
+				try {
+					
+					//System.out.println("SocialProvider_Google: monitor thread -> connected=" + mGoogleApiClient.isConnected() + ", status = " + ISocialProvider.STATE_DEFAULT + ", currentActivity=" + app.getCurrentActivity());
+					
+					if (app.getCurrentActivity() != null) {
+						
+						if (!isSignInRejected()) {
+							
+							if (DeviceUtils.isConnectedOrConnecting()) {
+								if (!mGoogleApiClient.isConnected() && getState() == ISocialProvider.STATE_DEFAULT) {
+									
+									//String name = Plus.AccountApi.getAccountName(mGoogleApiClient);
+									//System.out.println("Account name = " + name);
+									//if (name != null) {
+										//TODO: start it
+									if (System.currentTimeMillis() - last_connect_attempt > 1000 * 10) {
+										
+										connect();
+										
+										last_connect_attempt = System.currentTimeMillis();
+									}
+									//}
+								}
+							} else {
+						  		//Toast_Base.showToast_InCenter_Long(app, " No Connection ");
+								
+								if (mGoogleApiClient.isConnected()) {
+									
+									mGoogleApiClient.disconnect();
+									
+							  		setState(STATE_DEFAULT);
+								}
+							}
+						}
+						
+						uiHandler.post(new Runnable() {
+							
+							@Override
+							public void run() {
+								if (view_signin != null) view_signin.invalidate();
+							}
+						});
+						
+					}
+					
+					Thread.sleep(1000);
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	});
+  }
+  
+  
+	@Override
+	public boolean isSignInRejected() {
+		return signInRejected;
+	}
+	
+	
+	@Override
+	public void setSignInRejected(boolean rejected) {
+		signInRejected = rejected;
+	}
+	
+	
+  private GoogleApiClient buildGoogleApiClient() {
+	
+	//Plus.PlusOptions plusOptions = new Plus.PlusOptions.Builder()
+	//	.addActivityTypes("http://schema.org/DiscoverAction").build();
+	Plus.PlusOptions plusOptions = Plus.PlusOptions.builder().build();
+	
+	
+    // When we build the GoogleApiClient we specify where connected and
+    // connection failed callbacks should be returned, which Google APIs our
+    // app uses and which OAuth 2.0 scopes our app requests.
+    return new GoogleApiClient.Builder(app)
+        .addConnectionCallbacks(this)
+        .addOnConnectionFailedListener(this)
+        .addApi(Plus.API, plusOptions)
+        .addScope(Plus.SCOPE_PLUS_LOGIN)
+        //.addScope(Plus.SCOPE_PLUS_PROFILE)
+        .addApi(Games.API)
+        .addScope(Games.SCOPE_GAMES)
+        .build();
+  }
+	
+	
+	public void sentMoment_Scores(long scores) {
+		
+		if (mGoogleApiClient.isConnected()) {
+			
+			try {
+				
+				String username = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient).getDisplayName();
+				if (username == null) {
+					username = "";
+				}
+				
+				String appname = "Easy Colors";
+				String url = "https://play.google.com/store/apps/details?id=com.easycolours";
+				
+				//ninja exceeded 100 scores, by playing on Easy Colors game
+				//Serious Players Can Make It! Why Not to Play a while ? -> https://play.google.com/store/apps/details?id=com.easycolours
+				ItemScope target = new ItemScope.Builder()
+						//.setId("myid")
+						.setName(username + " exceeded " + scores + " scores, by playing on " + appname + " game")
+						.setDescription("Serious Players Can Make It! Why Not to Play a while ? -> " + url)
+						.setUrl(url)
+						// .setImage("http://example.com/images/albumThumb.png")
+						.setType("http://schema.org/Thing").build();
+				
+				Moment moment = new Moment.Builder()
+						.setType("http://schema.org/DiscoverAction")
+						.setTarget(target)
+						.build();
+				
+				Plus.MomentsApi.write(mGoogleApiClient, moment);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+  
+	
+  /*
+   * moments
+   * http://schema.org/DiscoverAction
+   * http://schema.org/Thing
+   */
+  
+  
+  @Override
+  public void connect() {
+	  
+	  Log.i(TAG, "connect");
+	  
+	  if (mGoogleApiClient.isConnected()) {
+		  throw new IllegalStateException();
+	  }
+	  	
+	  	setState(STATE_IN_PROGRESS);
+	  	
+	  	if (DeviceUtils.isConnectedOrConnecting()) {
+	  		
+		    mGoogleApiClient.connect();
+		    
+	  	} else {
+	  		
+	  		setState(STATE_DEFAULT);
+	  		
+	  		uiHandler.post(new Runnable() {
+				
+				@Override
+				public void run() {
+					
+					Toast_Base.showToast_InCenter_Short(app, "  " + app.getString(R.string.label_noconnection) + "  ");
+				}
+			});
+	  	}
+  }
+  
+  
+  @Override
+	public boolean isConnected() {
+	  return mGoogleApiClient.isConnected();
+  }
+  
+  
+  @Override
+  public boolean isConnecting() {
+  	return mGoogleApiClient.isConnecting();
+  }
+  
+  
+  @Override
+  public void disconnect() {
+	  
+	  Log.i(TAG, "disconnect");
+	  
+	  setState(STATE_DEFAULT);
+	  
+      //Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+      mGoogleApiClient.disconnect();
+      //mGoogleApiClient.connect();
+      
+      //userIcon = null;
+  }
+  
+  
+	@Override
+	public void disconnectAndClear() {
+		  Log.i(TAG, "disconnect");
+		  
+		  setState(STATE_DEFAULT);
+		  
+	      Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+	      mGoogleApiClient.disconnect();
+	      //mGoogleApiClient.connect();
+	      
+	      userIcon = null;
+	}
+	
+  
+  @Override
+  public int getState() {
+	  return mSignInProgress;
+  }
+  
+  
+  @Override
+  public void setState(int state) {
+	  
+	  System.out.println(TAG + ":setState =" + state);
+	  
+	  mSignInProgress = state;
+	  
+	  if (mSignInProgress != STATE_DEFAULT) {
+	        setSignInRejected(false);
+	  }
+	  
+	  if (mSignInProgress == STATE_SIGNED_IN) {
+		  
+		  synchronizeAchievements();
+		  
+		  if (leaderboard_requested_withmode_id != -1) {
+			  openLeaderboard(leaderboard_requested_withmode_id);
+		  }
+		  
+		  if (achievements_requested_flag) {
+			  openAchievements();
+		  }
+	  }
+	  
+	  uiHandler.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				if (view_signin != null) view_signin.invalidate();
+				
+				Toast_Base.showToast_InCenter_Short(app,  getStateMesage());
+			}
+		});
+  }
+  
+  
+  @Override
+  public int getErrorCode() {
+  	return mSignInError;
+  }
+
+  
+  /* onConnected is called when our Activity successfully connects to Google
+   * Play services.  onConnected indicates that an account was selected on the
+   * device, that the selected account has granted any requested permissions to
+   * our app and that we were able to establish a service connection to Google
+   * Play services.
+   */
+  @Override
+  public void onConnected(Bundle connectionHint) {
+    // Reaching onConnected means we consider the user signed in.
+    Log.i(TAG, "onConnected");
+    
+    
+    if (mGoogleApiClient.isConnected()) {
+    	System.out.println("mGoogleApiClient.isConnected()=" + mGoogleApiClient.isConnected());
+    }
+    
+    // Retrieve some profile information to personalize our app for the user.
+    Person currentUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+    
+    if (currentUser == null) {
+    	
+    	///onSignedOut();
+    	
+ 
+    	
+    	if (mGoogleApiClient.isConnected()) {
+    		disconnect();
+    	} else {
+    		setState(STATE_DEFAULT);
+    	}
+    	
+    	resolveSignInError();
+    	
+    } else {
+	    String personName = currentUser.getDisplayName();
+	    String personPhotoURL = currentUser.getImage().getUrl();
+	    downloadIcon_InBackground(personPhotoURL);
+	    //System.out.println(personPhotoURL);
+	    //String personGooglePlusProfile = currentUser.getUrl();
+	    //String personEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
+
+        // Indicate that the sign in process is complete.
+        setState(STATE_SIGNED_IN);
+        
+        //Plus.PeopleApi.loadVisible(mGoogleApiClient, null).setResultCallback(this);
+    }
+  }
+
+  
+  protected void downloadIcon_InBackground(final String url) {
+	  
+	  app.getExecutor().execute(new Runnable() {
+		
+			@Override
+			public void run() {
+			      InputStream in = null;
+			      try {
+			        in = new java.net.URL(url).openStream();
+			        userIcon = BitmapFactory.decodeStream(in);
+			        
+					uiHandler.post(new Runnable() {
+						
+						@Override
+						public void run() {
+							if (view_signin != null) view_signin.invalidate();
+						}
+					});
+			      } catch (Exception e) {
+			          e.printStackTrace();
+			      } finally {
+			    	  if (in != null) {
+			    		  try {
+							in.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+			    	  }
+			      }
+			}
+
+	  	}
+	  );
+  }
+  
+  
+  /* onConnectionFailed is called when our Activity could not connect to Google
+   * Play services.  onConnectionFailed indicates that the user needs to select
+   * an account, grant permissions or resolve an error in order to sign in.
+   */
+  @Override
+  public void onConnectionFailed(ConnectionResult result) {
+    // Refer to the javadoc for ConnectionResult to see what error codes might
+    // be returned in onConnectionFailed.
+    Log.i(TAG, "onConnectionFailed: ConnectionResult.getErrorCode() = "
+        + result.getErrorCode());
+
+    //TODO: FIX
+      /*if (result.getErrorCode() == ConnectionResult.API_UNAVAILABLE) {
+          // An API requested for GoogleApiClient is not available. The device's current
+          // configuration might not be supported with the requested API or a required component
+          // may not be installed, such as the Android Wear application. You may need to use a
+          // second GoogleApiClient to manage the application's optional APIs.
+      } else*/ //if (mSignInProgress != STATE_IN_PROGRESS) {
+          // We do not have an intent in progress so we should store the latest
+          // error resolution intent for use when the sign in button is clicked.
+          mSignInIntent = result.getResolution();
+          mSignInError = result.getErrorCode();
+
+        //TODO: FIX
+          //if (mSignInProgress == STATE_SIGNED_IN) {
+              // STATE_SIGNED_IN indicates the user already clicked the sign in button
+              // so we should continue processing errors until the user is signed in
+              // or they click cancel.
+             // resolveSignInError();
+          //}
+      //}
+
+    // In this sample we consider the user signed out whenever they do not have
+    // a connection to Google Play services.
+          
+    resolveSignInError();
+          
+    onSignedOut();
+  }
+  
+  /* Starts an appropriate intent or dialog for user interaction to resolve
+   * the current error preventing the user from being signed in.  This could
+   * be a dialog allowing the user to select an account, an activity allowing
+   * the user to consent to the permissions being requested by your app, a
+   * setting to enable device networking, etc.
+   */
+  private void resolveSignInError() {
+	
+	Log.i(TAG, "resolveSignInError");
+	
+	//setState(STATE_IN_PROGRESS);
+	
+    if (mSignInIntent != null) {
+      // We have an intent which will allow our user to sign in or
+      // resolve an error.  For example if the user needs to
+      // select an account to sign in with, or if they need to consent
+      // to the permissions your app is requesting.
+    	
+      try {
+        // Send the pending intent that we stored on the most recent
+        // OnConnectionFailed callback.  This will allow the user to
+        // resolve the error currently preventing our connection to
+        // Google Play services.
+    	  //setState(STATE_IN_PROGRESS);
+    	  
+    	  
+    	  System.out.println("resolveSignInError: app.getCurrentActivity()=" + app.getCurrentActivity());
+    	  
+    	  
+    	  if (app.getCurrentActivity() != null) {
+    		  app.getCurrentActivity().startIntentSenderForResult(mSignInIntent.getIntentSender(),
+    				  REQUEST_CODE_SIGN_IN, null,
+    				  //Intent.FLAG_ACTIVITY_SINGLE_TOP,
+    				  Intent.FLAG_ACTIVITY_REORDER_TO_FRONT,
+    				  0, 0
+    				  );
+    	  }
+        
+      } catch (SendIntentException e) {
+        Log.i(TAG, "Sign in intent could not be sent: "
+            + e.getLocalizedMessage());
+        // The intent was canceled before it was sent.  Attempt to connect to
+        // get an updated ConnectionResult.
+        //setState(STATE_SIGNED_IN);
+        //mGoogleApiClient.connect();
+      }
+      
+      mSignInIntent = null;
+      
+    } else {
+      // Google Play services wasn't able to provide an intent for some
+      // error types, so we show the default Google Play services error
+      // dialog which may still start an intent on our behalf if the
+      // user can resolve the issue.
+    	 if (app.getCurrentActivity() != null) {
+    		 app.getCurrentActivity().showDialog(ISocialProvider.DIALOG_SIGN_IN_ERROR);
+    	 }
+    }
+  }
+
+
+  @Override
+  public void onResult(LoadPeopleResult peopleData) {
+	  
+	Log.i(TAG, "onResult: LoadPeopleResult");
+	  
+    if (peopleData.getStatus().getStatusCode() == CommonStatusCodes.SUCCESS) {
+      
+    	//mCirclesList.clear();
+    	
+    	personBuffer = peopleData.getPersonBuffer();
+    	
+      try {
+          int count = personBuffer.getCount();
+          for (int i = 0; i < count; i++) {
+        	  Person friend = personBuffer.get(i);
+        	  friends.add(friend);
+              //mCirclesList.add(personBuffer.get(i).getCircledByCount() + " " + personBuffer.get(i).getGender() + " " + personBuffer.get(i).getCurrentLocation() + " " + personBuffer.get(i).getBraggingRights() + " " + personBuffer.get(i).getDisplayName());
+          }
+      } finally {
+    	  //FIXME: Kepp buffer opened
+          //personBuffer.close();
+      }
+      
+     // mCirclesAdapter.notifyDataSetChanged();
+    } else {
+      Log.e(TAG, "Error requesting visible circles: " + peopleData.getStatus());
+    }
+  }
+  
+  
+  @Override
+  public void openInviteDialog() {
+	  	
+		if (mGoogleApiClient.isConnected()) {
+			
+			Intent shareIntent = null;
+			
+			String message = app.getString(app.getApp_Me().getName())
+					+ " "
+					+ app.getString(R.string.social_invite_isprettycool)
+					+ " "
+					+ app.getString(R.string.social_invite_checkitout_ongps)
+					+ " "
+					+ app.getString(R.string.social_invite_beatmyscore)
+					+ "\r\n"
+					+ "\r\n"
+					+ Uri.parse(app.getApp_Me().getMarketURL())
+					+ "\r\n";
+				
+		      /*if (friends.size() > 0 && !personBuffer.isClosed()) {
+			      
+		    	  shareIntent = new PlusShare.Builder(app)
+		          .setType("text/plain")
+		          .setText("Hi, I want to invite you to play this game: " + app.getString(app.getApp_Me().getName()) + "")
+		          .setRecipients(friends)
+		          .setContentUrl(Uri.parse(app.getApp_Me().getMarketURL()))
+		          .getIntent();
+			      
+		      } else {*/
+		    	  
+			      shareIntent = new PlusShare.Builder(app)
+		          .setType("text/plain")
+		          .setText(message)
+		          .setContentUrl(Uri.parse(app.getApp_Me().getMarketURL()))
+		          .getIntent();
+			      
+		      //}
+		      
+		      
+		      if (app.getCurrentActivity() != null) {
+		    	  app.getCurrentActivity().startActivityForResult(shareIntent, ISocialProvider.REQUEST_CODE_INVITE);
+		    	  
+		        	IEventsManager eventsManager = Application_Base.getInstance().getEventsManager();
+		    		eventsManager.register(app,
+		    				eventsManager.create(IEvent_Base.MARKETING, IEvent_Base.MARKETING_INVITE_FRIENDS_CLICKED,
+		    				"MARKETING", "INVITE_FRIENDS_CLICKED"));
+		      }
+		      
+		} else {
+			
+			//Toast_Base.showToast_InCenter_Long(app, app.getString(org.metatrans.commons.R.string.label_leaderboards_not_available));
+			
+			connect();
+			
+		}
+  }
+  
+  
+  private void onSignedOut() {
+	
+	  Log.i(TAG, "onSignedOut");
+	  
+	//setState(STATE_DEFAULT);
+	  
+    //mCirclesList.clear();
+    //mCirclesAdapter.notifyDataSetChanged();
+  }
+  
+  
+  @Override
+  public void onConnectionSuspended(int cause) {
+	  
+	  Log.i(TAG, "onConnectionSuspended");
+	  
+	setState(STATE_IN_PROGRESS);
+	  
+    // The connection to Google Play services was lost for some reason.
+    // We call connect() to attempt to re-establish the connection or get a
+    // ConnectionResult that we can attempt to resolve.
+    mGoogleApiClient.connect();
+  }
+  
+  
+  @Override
+	public Dialog getErrorDialog() {
+	  
+	  Log.i(TAG, "getErrorDialog");
+	  
+	  if (app.getCurrentActivity() == null) {
+		  return null;
+	  }
+	  
+		if (GooglePlayServicesUtil.isUserRecoverableError(getErrorCode())) {
+			
+			return GooglePlayServicesUtil.getErrorDialog(getErrorCode(),
+					app.getCurrentActivity(), REQUEST_CODE_SIGN_IN,
+					new DialogInterface.OnCancelListener() {
+						@Override
+						public void onCancel(DialogInterface dialog) {
+							Log.e(TAG,
+									"Google Play services resolution cancelled");
+							setState(ISocialProvider.STATE_DEFAULT);
+						}
+					});
+		} else {
+			return new AlertDialog.Builder(app.getCurrentActivity())
+					.setMessage(R.string.social_play_services_error)
+					.setPositiveButton(R.string.social_close,
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									Log.e(TAG,
+											"Google Play services error could not be "
+													+ "resolved: "
+													+ getErrorCode());
+									setState(ISocialProvider.STATE_DEFAULT);
+								}
+							}).create();
+		}
+	}
+  	
+  	
+	@Override
+	public String getStateMesage() {
+		
+		if (!DeviceUtils.isConnectedOrConnecting()) {
+			
+			return "   " + app.getString(org.metatrans.commons.R.string.label_noconnection) + "   ";
+			
+		} else if (mSignInProgress == STATE_DEFAULT) {
+			
+			return "   " + app.getString(org.metatrans.commons.R.string.label_notsignedin) + "   ";
+			
+		} else if (mSignInProgress == STATE_IN_PROGRESS) {
+			
+			return "   " + app.getString(org.metatrans.commons.R.string.label_connecting) + "   ";
+			
+		} else if (mSignInProgress == STATE_SIGNED_IN) {
+			
+			if (isConnected()) {
+				return app.getString(org.metatrans.commons.R.string.label_welcome)
+						+ " " + Plus.PeopleApi.getCurrentPerson(mGoogleApiClient).getDisplayName();
+			} else {
+				return app.getString(org.metatrans.commons.R.string.label_connecting);
+			}
+			
+		} else if (mSignInProgress == STATE_ERROR) {
+			return "Google Play : Error Code " + (mSignInError == 0 ? "n/a" : mSignInError);
+		}
+		
+		return "";
+	}
+	
+	
+	@Override
+	public Bitmap getUserIcon() {
+		return userIcon;
+	}
+	
+	
+	@Override
+	public void submitLeaderboardScore(int modeID, long number) {
+		System.out.println("submitLeaderboardScore: modeID=" + modeID + ", number=" + number);
+		Games.Leaderboards.submitScore(mGoogleApiClient, mapping_mode2leaderboard.getLeaderboardID(modeID), number);
+	}
+	
+	
+	@Override
+	public void setEnabled(boolean _enabled) {
+		enabled = _enabled;
+	}
+	
+	
+	@Override
+	public void openLeaderboard_LocalOnly(int modeID) {
+		
+		System.out.println("openLeaderboard_LocalOnly modeID=" + modeID);
+		
+		//Open Local Board
+		if (enabled) {
+			
+			Intent intent = new Intent(app.getCurrentActivity(), activityClass_Result);
+			app.getCurrentActivity().startActivity(intent);
+			
+		} else {
+			
+			Toast_Base.showToast_InCenter(app, app.getString(R.string.achievements_current_game_inprogress));
+		}
+	}
+	
+	
+	@Override
+	public void openLeaderboard(int modeID) {
+		
+		System.out.println("openLeaderboard modeID=" + modeID);
+		
+		//Open Remote Board
+		leaderboard_requested_withmode_id = modeID;
+		
+		if (mGoogleApiClient.isConnected()) {
+			
+			leaderboard_requested_withmode_id = -1;
+			
+			System.out.println("openLeaderboard is connected");
+			
+			if (app.getCurrentActivity() != null) {
+				System.out.println("openLeaderboard open leaderboard");
+				
+				app.getCurrentActivity().startActivityForResult(
+					Games.Leaderboards.getLeaderboardIntent(mGoogleApiClient, mapping_mode2leaderboard.getLeaderboardID(modeID)),
+					0);
+			}
+		} else {
+			
+			//Toast_Base.showToast_InCenter_Long(app, app.getString(org.metatrans.commons.R.string.label_leaderboards_not_available));
+			
+			connect();
+			
+		}
+	}
+	
+	
+	@Override
+	public void setErrorCode(int code) {
+		mSignInError = code;
+	}
+	
+	
+	@Override
+	public View getSignInView(IConfigurationColours coloursCfg) {
+		
+		if (view_signin == null) {
+			view_signin = new View_Social_SignIn_GoogleImpl(app, this, coloursCfg);
+			view_signin.setId(VIEWID_SIGNIN);
+		}
+		
+		return view_signin;
+	}
+	
+	
+	@Override
+	public void detachSignInView(ViewGroup frame) {
+		
+		detachView(frame, VIEWID_SIGNIN);
+		
+		view_signin = null;
+	}
+	
+	
+	@Override
+	public void detachLeaderboardView(ViewGroup frame) {
+		
+		//System.out.println("detachLeaderboardView");
+		
+		detachView(frame, VIEWID_LEADERBOARDS);
+		
+		view_achievements_and_leaderboards = null;
+	}
+	
+	
+	@Override
+	public View getLikeView(IConfigurationColours coloursCfg, RectF rectf) {
+		
+		if (view_like == null && app.getApp_Me().getMarketURL() != null) {
+			
+			view_like = new View_Social_GooglePlus1_Code(app.getCurrentActivity(), rectf);
+			view_like.setId(VIEWID_LIKE);
+			view_like.getButton().initialize(app.getApp_Me().getMarketURL(), REQUEST_LIKE);
+		}
+		
+		return view_like;
+	}
+	
+	
+	@Override
+	public void detachLikeView(ViewGroup frame) {
+		
+		detachView(frame, VIEWID_LIKE);
+		
+		view_like = null;
+	}
+	
+	
+	private void detachView(ViewGroup frame, int viewid) {
+		if (frame != null) {
+			View old = frame.findViewById(viewid);
+			if (old != null) {
+				frame.removeView(old);
+			}
+		}
+	}
+	
+	
+	@Override
+	public void unlock(int achievementID) {
+		
+		if (isConnected()) {
+			
+			IConfigurationAchievements cfg = app.getAchievementsManager().getConfigByID(achievementID);
+			Games.Achievements.unlock(mGoogleApiClient, app.getString(cfg.geIDReference()));
+			
+		} else {
+			
+			//connect();
+			
+		}
+	}
+	
+	
+	@Override
+	public void increment(int achievementID, int increment) {
+		
+		if (isConnected()) {
+			
+			IConfigurationAchievements cfg = app.getAchievementsManager().getConfigByID(achievementID);
+			Games.Achievements.increment(mGoogleApiClient, app.getString(cfg.geIDReference()), increment);
+			
+		} else {
+			
+			//connect();
+			
+		}
+	}
+	
+	
+	@Override
+	public boolean supportAchievementsCounting() {
+		return true;
+	}
+	
+	
+	private void synchronizeAchievements() {
+		
+		if (isConnected()) {
+			
+			try {
+				
+				System.out.println("EngagementProvider_Google: synchronizeAchievements called");
+				
+				boolean forceLoad = true;
+				
+				PendingResult<Achievements.LoadAchievementsResult> achievementsResult = Games.Achievements.load(mGoogleApiClient, forceLoad);
+				
+			    achievementsResult.setResultCallback(new ResultCallback<Achievements.LoadAchievementsResult>() {
+			    	
+			        @Override
+			        public void onResult(Achievements.LoadAchievementsResult loadAchievementsResult) {
+			        	
+			            if (loadAchievementsResult != null) {
+			            	
+			                if (loadAchievementsResult.getStatus().getStatusCode() == GamesStatusCodes.STATUS_OK) {
+			                	
+			                    if (loadAchievementsResult.getAchievements() != null) {
+			                    	
+			            			final Map<String, Integer> achievementsMap = new HashMap<String, Integer>();
+			            			
+			                        AchievementBuffer achievementBuffer = loadAchievementsResult.getAchievements();
+			                        
+			                        for (Achievement achievement : achievementBuffer){
+			                        	
+			                            boolean unlocked = achievement.getState() == Achievement.STATE_UNLOCKED;  // is unlocked
+			                            boolean incremental = achievement.getType() == Achievement.TYPE_INCREMENTAL;  // is incremental
+			                            
+			                            int steps = 0;
+			                            if ( incremental ) {
+			                               steps = achievement.getCurrentSteps();  // current incremental steps
+			                            } else if (unlocked) {
+			                            	steps = 1;
+			                            }
+			                            
+			                            String refid = achievement.getAchievementId();  // the achievement ID string
+			                            
+			                            achievementsMap.put(refid, steps);
+			                        }
+			                        
+			                        achievementBuffer.close();
+			                        
+			                        
+			                        for (String refid: achievementsMap.keySet()) {
+			                        	
+			                        	IConfigurationAchievements cfg = app.getAchievementsManager().getConfigByRefID(refid);
+			                        	
+			                        	Integer steps_remote = achievementsMap.get(refid);
+			                        	int steps_local = app.getAchievementsManager().get(app, cfg.getID());
+			                        	
+			                        	if (steps_remote > steps_local) {
+			                        		
+			                        		System.out.println("EngagementProvider_Google: synchronizeAchievements updating local achievement " + app.getString(cfg.getName()) + ", inc= " + (steps_remote - steps_local) + ", steps_remote=" + steps_remote);
+			                        		
+			                        		app.getAchievementsManager().inc(app, cfg.getID(), steps_remote - steps_local, false);
+			                        		
+			                        	} else if (steps_local > steps_remote) {
+			                        		
+			                        		if (steps_remote < cfg.getMaxCount() * cfg.getIncrementsCount()) {
+			                        			
+				                        		System.out.println("EngagementProvider_Google: synchronizeAchievements updating remote achievement " + app.getString(cfg.getName()) + ", inc= " + (steps_local - steps_remote) + ", steps_local=" + steps_local);
+				                        		
+				                        		if (cfg.getMaxCount() * cfg.getIncrementsCount() == 1) {
+				                        			Games.Achievements.unlock(mGoogleApiClient, refid);
+				                        		} else {
+				                        			Games.Achievements.increment(mGoogleApiClient, refid, steps_local - steps_remote);
+				                        		}
+			                        		}
+			                        	}
+			                        }
+			                    }
+			                }
+			            }
+	
+			        }
+			    });
+		    
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		    
+		} else {
+			
+			//connect();
+			
+		}
+	}
+	
+	
+	@Override
+	public void openAchievements() {
+		
+		achievements_requested_flag = true;
+		
+		if (isConnected()) {
+			
+			achievements_requested_flag = false;
+			
+			app.getCurrentActivity().startActivityForResult(Games.Achievements.getAchievementsIntent(mGoogleApiClient), REQUEST_ACHIEVEMENTS);
+			
+		} else {
+			
+			connect();
+			
+		}
+	}
+	
+	
+	@Override
+	public View getLeaderboardView(IConfigurationColours coloursCfg, RectF rectf) {
+		
+		return getLeaderboardView(coloursCfg, rectf, new ViewActivator_Enabled());
+	}
+	
+	
+	public View getLeaderboardView(IConfigurationColours coloursCfg, RectF rectf, IViewActivator activator) {
+		
+		if (view_achievements_and_leaderboards == null) {
+			view_achievements_and_leaderboards = new View_Achievements_And_Leaderboards_GoogleImpl(app, rectf, app.getEngagementProvider(), coloursCfg, activator);
+			view_achievements_and_leaderboards.setId(VIEWID_LEADERBOARDS);
+		}
+		
+		return view_achievements_and_leaderboards;
+	}
+	
+	
+	public View getAchievementsView(IConfigurationColours coloursCfg, RectF rectf) {
+		
+		return getLeaderboardView(coloursCfg, rectf);
+	}
+}
