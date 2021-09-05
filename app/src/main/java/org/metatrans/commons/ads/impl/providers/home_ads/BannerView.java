@@ -144,18 +144,27 @@ public class BannerView extends View implements OnTouchListener {
 					coloursCfg.getColour_Square_White(),
 					false
 					);
-			
-			buttonarea_text1 =   new TextArea(rectangle_text1, true, getResources().getString(promotedApp.getName()),
+
+			String appName = getResources().getString(promotedApp.getName());
+			appName = appName.substring(0, Math.min(appName.length(), 25));
+			appName += " ...";
+			buttonarea_text1 =   new TextArea(rectangle_text1, true, appName,
 					//coloursCfg.getColour_Delimiter(), coloursCfg.getColour_Square_White(), coloursCfg.getColour_Square_ValidSelection());
 					coloursCfg.getColour_Delimiter(),
 					coloursCfg.getColour_Square_White());
-			
-			buttonarea_text2 =  new TextArea(rectangle_text2, true, getResources().getString(promotedApp.getDescription_Line1()),
+
+			String promoText1 = getResources().getString(promotedApp.getDescription_Line1());
+			promoText1 = promoText1.substring(0, Math.min(promoText1.length(), 50));
+			promoText1 += " ...";
+			buttonarea_text2 =  new TextArea(rectangle_text2, true, promoText1,
 					//coloursCfg.getColour_Delimiter(), coloursCfg.getColour_Square_White(), coloursCfg.getColour_Square_ValidSelection());
 					coloursCfg.getColour_Delimiter(),
 					coloursCfg.getColour_Square_White());
-			
-			buttonarea_text3 =  new TextArea(rectangle_text2, true, getResources().getString(promotedApp.getDescription_Line2()),
+
+			String promoText2 = getResources().getString(promotedApp.getDescription_Line2());
+			promoText2 = promoText2.substring(0, Math.min(promoText2.length(), 50));
+			promoText2 += " ...";
+			buttonarea_text3 =  new TextArea(rectangle_text2, true, promoText2,
 					//coloursCfg.getColour_Delimiter(), coloursCfg.getColour_Square_White(), coloursCfg.getColour_Square_ValidSelection());
 					coloursCfg.getColour_Delimiter(),
 					coloursCfg.getColour_Square_White());
