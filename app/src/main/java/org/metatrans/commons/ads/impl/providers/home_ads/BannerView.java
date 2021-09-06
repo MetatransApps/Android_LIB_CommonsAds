@@ -3,7 +3,8 @@ package org.metatrans.commons.ads.impl.providers.home_ads;
 
 import org.metatrans.commons.R;
 import org.metatrans.commons.cfg.colours.IConfigurationColours;
-import org.metatrans.commons.cfg.publishedapp.IPublishedApplication;
+//import org.metatrans.commons.cfg.publishedapp.IPublishedApplication;
+import org.metatrans.commons.cfg.publishedapp.IHomeAdInfo;
 import org.metatrans.commons.ui.ButtonAreaClick_Image;
 import org.metatrans.commons.ui.IButtonArea;
 import org.metatrans.commons.ui.TextArea;
@@ -42,7 +43,7 @@ public class BannerView extends View implements OnTouchListener {
 	protected Paint paint_background;
 	
 	private IConfigurationColours coloursCfg;
-	private IPublishedApplication promotedApp;
+	private IHomeAdInfo adInfo;
 	
 	private int colour_area;
 	
@@ -53,14 +54,14 @@ public class BannerView extends View implements OnTouchListener {
 	private IButtonArea current_text2 = null;
 	
 	
-	public BannerView(Context context, IConfigurationColours _coloursCfg, IPublishedApplication _promotedApp) {
+	public BannerView(Context context, IConfigurationColours _coloursCfg, IHomeAdInfo _adInfo) {
 		
 		super(context);
 		
 		
 		coloursCfg 						= _coloursCfg;
-		
-		promotedApp 					= _promotedApp;
+
+		adInfo 							= _adInfo;
 		
 		rectf_main 						= new RectF();
 		rectf_main_inner 				= new RectF();
@@ -138,14 +139,14 @@ public class BannerView extends View implements OnTouchListener {
 			
 			
 			buttonarea_icon =  new ButtonAreaClick_Image(rectangle_icon,
-					BitmapUtils.fromResource(getContext(), promotedApp.getIconResID()),
+					BitmapUtils.fromResource(getContext(), adInfo.getIconResID()),
 					coloursCfg.getColour_Delimiter(),
 					//coloursCfg.getColour_Square_Black(),
 					coloursCfg.getColour_Square_White(),
 					false
 					);
 
-			String appName = getResources().getString(promotedApp.getName());
+			String appName = getResources().getString(adInfo.getName());
 			appName = appName.substring(0, Math.min(appName.length(), 25));
 			appName += " ...";
 			buttonarea_text1 =   new TextArea(rectangle_text1, true, appName,
@@ -153,7 +154,7 @@ public class BannerView extends View implements OnTouchListener {
 					coloursCfg.getColour_Delimiter(),
 					coloursCfg.getColour_Square_White());
 
-			String promoText1 = getResources().getString(promotedApp.getDescription_Line1());
+			String promoText1 = getResources().getString(adInfo.getDescription_Line1());
 			promoText1 = promoText1.substring(0, Math.min(promoText1.length(), 50));
 			promoText1 += " ...";
 			buttonarea_text2 =  new TextArea(rectangle_text2, true, promoText1,
@@ -161,7 +162,7 @@ public class BannerView extends View implements OnTouchListener {
 					coloursCfg.getColour_Delimiter(),
 					coloursCfg.getColour_Square_White());
 
-			String promoText2 = getResources().getString(promotedApp.getDescription_Line2());
+			String promoText2 = getResources().getString(adInfo.getDescription_Line2());
 			promoText2 = promoText2.substring(0, Math.min(promoText2.length(), 50));
 			promoText2 += " ...";
 			buttonarea_text3 =  new TextArea(rectangle_text2, true, promoText2,
@@ -172,12 +173,12 @@ public class BannerView extends View implements OnTouchListener {
 			current_text2 = buttonarea_text2;
 			
 			
-			if (promotedApp.isPaid()) {
+			if (adInfo.isPaid()) {
 				
 				buttonarea_type1 =   new TextArea(rectangle_type1, true, getResources().getString(R.string.label_advertising_paid_1),
 						coloursCfg.getColour_Delimiter(),
 						coloursCfg.getColour_Square_MarkingSelection());
-				
+
 				buttonarea_type2 =  new TextArea(rectangle_type2, true, getResources().getString(R.string.label_advertising_paid_2),
 						coloursCfg.getColour_Delimiter(),
 						coloursCfg.getColour_Square_MarkingSelection());
@@ -187,10 +188,16 @@ public class BannerView extends View implements OnTouchListener {
 				buttonarea_type1 =   new TextArea(rectangle_type1, true, getResources().getString(R.string.label_advertising_free_1),
 						coloursCfg.getColour_Delimiter(),
 						coloursCfg.getColour_Square_ValidSelection());
-				
-				buttonarea_type2 =  new TextArea(rectangle_type2, true, getResources().getString(R.string.label_advertising_free_2),
-						coloursCfg.getColour_Delimiter(),
-						coloursCfg.getColour_Square_ValidSelection());
+
+				if (adInfo.hasAds()) {
+					buttonarea_type2 = new TextArea(rectangle_type2, true, getResources().getString(R.string.label_advertising_free_2),
+							coloursCfg.getColour_Delimiter(),
+							coloursCfg.getColour_Square_ValidSelection());
+				} else {
+					buttonarea_type2 =  new TextArea(rectangle_type2, true, getResources().getString(R.string.label_advertising_paid_2),
+							coloursCfg.getColour_Delimiter(),
+							coloursCfg.getColour_Square_MarkingSelection());
+				}
 			}
 			
 			
@@ -353,7 +360,7 @@ public class BannerView extends View implements OnTouchListener {
 	}
 
 
-	public IPublishedApplication getPromotedApp() {
-		return promotedApp;
+	public IHomeAdInfo getHomeAdInfo() {
+		return adInfo;
 	}
 }
