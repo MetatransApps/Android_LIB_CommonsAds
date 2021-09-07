@@ -54,15 +54,25 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
         System.out.println("AdsContainer_HomeAds: createBanner called");
 
         IConfigurationColours coloursCfg = ConfigurationUtils_Colours.getConfigByID(Application_Base.getInstance().getUserSettings().uiColoursID);
+
+        AdsContainer_HomeAds_BaseImpl currentContainer = getCurrentHomeAdsSubContainer();
         final IHomeAdInfo homeAdInfo = getNextHomeAdInfo();
 
-        View bannerView = new BannerView(getActivity(), coloursCfg, homeAdInfo);
+        View bannerView = new BannerView(getActivity(), coloursCfg, homeAdInfo, currentContainer);
 
         bannerView.setId(BannerUtils.AD_BANNER_VIEW_ID);
 
         View wrapper = BannerUtils.createView(getActivity(), bannerView, flow.getGravity());
 
         return wrapper;
+    }
+
+
+    /*
+     * Override in case of Composite Home Ads container
+     */
+    protected AdsContainer_HomeAds_BaseImpl getCurrentHomeAdsSubContainer() {
+        return this;
     }
 
 
@@ -138,14 +148,7 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
             public void run() {
                 flow.clicked();
 
-                IHomeAdInfo promoted = ((BannerView)bannerView).getHomeAdInfo();
-
-                openTarget(promoted);
-
-                IEventsManager eventsManager = Application_Base.getInstance().getEventsManager();
-                eventsManager.register(getActivity(),
-                        eventsManager.create(IEvent_Base.MARKETING, IEvent_Base.MARKETING_HOME_AD_PROVIDER_CLICKED, promoted.getID().hashCode(),
-                                "MARKETING", "HOME_AD_PROVIDER_CLICKED", "" + promoted.getID()));
+                ((BannerView)bannerView).openTarget();
 
             }
         });

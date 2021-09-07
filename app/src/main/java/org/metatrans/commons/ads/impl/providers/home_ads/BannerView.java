@@ -44,7 +44,8 @@ public class BannerView extends View implements OnTouchListener {
 	
 	private IConfigurationColours coloursCfg;
 	private IHomeAdInfo adInfo;
-	
+	private AdsContainer_HomeAds_BaseImpl homeAdsContainer;
+
 	private int colour_area;
 	
 	private Runnable click_action;
@@ -54,7 +55,7 @@ public class BannerView extends View implements OnTouchListener {
 	private IButtonArea current_text2 = null;
 	
 	
-	public BannerView(Context context, IConfigurationColours _coloursCfg, IHomeAdInfo _adInfo) {
+	public BannerView(Context context, IConfigurationColours _coloursCfg, IHomeAdInfo _adInfo, AdsContainer_HomeAds_BaseImpl _homeAdsContainer) {
 		
 		super(context);
 		
@@ -62,7 +63,7 @@ public class BannerView extends View implements OnTouchListener {
 		coloursCfg 						= _coloursCfg;
 
 		adInfo 							= _adInfo;
-		
+		homeAdsContainer 				= _homeAdsContainer;
 		rectf_main 						= new RectF();
 		rectf_main_inner 				= new RectF();
 		rectangle_icon 					= new RectF();
@@ -360,7 +361,7 @@ public class BannerView extends View implements OnTouchListener {
 	}
 
 
-	public IHomeAdInfo getHomeAdInfo() {
-		return adInfo;
+	public boolean openTarget() {
+		return homeAdsContainer.openTarget(adInfo);
 	}
 }
