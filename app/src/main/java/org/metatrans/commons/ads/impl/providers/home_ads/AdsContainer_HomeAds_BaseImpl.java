@@ -13,6 +13,7 @@ import org.metatrans.commons.ads.impl.flow.AdLoadFlow_Interstitial;
 import org.metatrans.commons.ads.impl.providers.AdsContainer_Base;
 import org.metatrans.commons.ads.utils.BannerUtils;
 import org.metatrans.commons.app.Application_Base;
+import org.metatrans.commons.cfg.appstore.IAppStore;
 import org.metatrans.commons.cfg.colours.ConfigurationUtils_Colours;
 import org.metatrans.commons.cfg.colours.IConfigurationColours;
 import org.metatrans.commons.cfg.publishedapp.IHomeAdInfo;
@@ -30,6 +31,11 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
 
     @Override
     public abstract int getProviderID();
+
+
+    protected int[] getExcludedStores() {
+        return new int[0];
+    }
 
 
     @Override

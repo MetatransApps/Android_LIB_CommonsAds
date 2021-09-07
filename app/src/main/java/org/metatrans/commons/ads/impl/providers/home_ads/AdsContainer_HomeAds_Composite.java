@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 
 import org.metatrans.commons.ads.api.IAdsProviders;
+import org.metatrans.commons.app.Application_Base;
 import org.metatrans.commons.cfg.publishedapp.IHomeAdInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -22,10 +24,30 @@ public class AdsContainer_HomeAds_Composite extends AdsContainer_HomeAds_BaseImp
 
 		super(context, null);
 
-		containers = _containers;
+		containers = new ArrayList<AdsContainer_HomeAds_BaseImpl>();
 
-		if (containers == null || containers.size() == 0) {
-			throw new IllegalStateException("HomeAds Containers list's size should be more tha zero containers=" + containers);
+		int storeID = Application_Base.getInstance().getAppStore().getID();
+
+		for(int i=0; i < _containers.size(); i++) {
+
+			AdsContainer_HomeAds_BaseImpl cur = _containers.get(i);
+
+			boolean hasAtLeast1Excluded = false;
+			int[] curExcludedStores = cur.getExcludedStores();
+			for (int j=0; j < curExcludedStores.length; j++) {
+				if (curExcludedStores[j] == storeID) {
+					hasAtLeast1Excluded = true;
+					break;
+				}
+			}
+
+			if (!hasAtLeast1Excluded) {
+				containers.add(cur);
+			}
+		}
+
+		if (containers.size() == 0) {
+			throw new IllegalStateException("HomeAds Containers list's size should be more tha zero containers.size() = " + containers.size());
 		}
 	}
 
