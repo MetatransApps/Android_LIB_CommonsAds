@@ -223,21 +223,19 @@ public class AdsManager {
 			
 			adsContainers.remove(homeAdIndex);
 
-			AdData homeAdsData = adsData_banner.getAdData(IAdsProviders.ID_HOME_ADS);
-			//System.out.println("HOME ADS CLICKED " + homeAdsData.getClicksCount());
-
-			if (homeAdsData.getClicksCount() == 0) {
-				adsContainers.add(0, homeAds_Container);
-				System.out.println("HomeAd (Banner) moved on the first place, because of less clicks");
-			} else {
-				if (Math.random() <= 0.333d) {
+			//AdData homeAdsData = adsData_banner.getAdData(IAdsProviders.ID_HOME_ADS);
+			//if (homeAdsData.getClicksCount() == 0) {
+			//	adsContainers.add(0, homeAds_Container);
+			//	System.out.println("HomeAd (Banner) moved on the first place, because of less clicks");
+			//} else {
+				if (Math.random() <= 0.5d) {
 					adsContainers.add(0, homeAds_Container);
 					System.out.println("HomeAd (Banner) moved on the first place, because of probability");
 				} else {
 					adsContainers.add(homeAds_Container);
 					System.out.println("HomeAd (Banner) moved on the last place");
 				}
-			}
+			//}
 		}
 		
 		System.out.println("ADS ORDER (Banner)" + adsContainers);
@@ -294,20 +292,19 @@ public class AdsManager {
 			
 			adsContainers.remove(homeAdIndex);
 
-			AdData homeAdsData = adsData_banner.getAdData(IAdsProviders.ID_HOME_ADS);
-
-			if (homeAdsData.getClicksCount() == 0) {
-				adsContainers.add(0, homeAds_Container);
-				System.out.println("HomeAd (Interstitial) moved on the first place, because of less clicks");
-			} else {
-				if (Math.random() <= 0.333d) {
+			//AdData homeAdsData = adsData_banner.getAdData(IAdsProviders.ID_HOME_ADS);
+			//if (homeAdsData.getClicksCount() == 0) {
+			//	adsContainers.add(0, homeAds_Container);
+			//	System.out.println("HomeAd (Interstitial) moved on the first place, because of less clicks");
+			//} else {
+				if (Math.random() <= 0.5d) {
 					adsContainers.add(0, homeAds_Container);
 					System.out.println("HomeAd (Interstitial) moved on the first place, because of probability");
 				} else {
 					adsContainers.add(homeAds_Container);
 					System.out.println("HomeAd (Interstitial) moved on the last place");
 				}
-			}
+			//}
 		}
 		
 		System.out.println("ADS ORDER (Interstitial)" + adsContainers);
