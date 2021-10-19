@@ -13,6 +13,7 @@ import org.metatrans.commons.ui.utils.DrawingUtils;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.view.MotionEvent;
@@ -30,8 +31,8 @@ public class BannerView extends View implements OnTouchListener {
 	private RectF rectangle_icon;
 	private RectF rectangle_text1;
 	private RectF rectangle_text2;
-	private RectF rectangle_type1;
-	private RectF rectangle_type2;
+	//private RectF rectangle_type1;
+	//private RectF rectangle_type2;
 	
 	private IButtonArea buttonarea_icon;
 	private IButtonArea buttonarea_text1;
@@ -69,8 +70,8 @@ public class BannerView extends View implements OnTouchListener {
 		rectangle_icon 					= new RectF();
 		rectangle_text1 				= new RectF();
 		rectangle_text2			 		= new RectF();
-		rectangle_type1 				= new RectF();
-		rectangle_type2			 		= new RectF();
+		//rectangle_type1 				= new RectF();
+		//rectangle_type2			 		= new RectF();
 		
 		paint_background 				= new Paint();
 		
@@ -87,9 +88,9 @@ public class BannerView extends View implements OnTouchListener {
 		
 		//if (!initialized) {
 			
-			int MARGIN = 1;
+			int MARGIN = 7;
 			
-			if (getMeasuredWidth() > getMeasuredHeight()){
+			if (getMeasuredWidth() > getMeasuredHeight()) {
 				
 				rectf_main.left = 0;//1 * getMeasuredWidth() / 6;
 				rectf_main.right = rectf_main.left + (4 * getMeasuredWidth()) / 8;
@@ -99,17 +100,17 @@ public class BannerView extends View implements OnTouchListener {
 			} else {
 				
 				rectf_main.left = 0;//1 * getMeasuredWidth() / 19;
-				rectf_main.right = rectf_main.left + (17 * getMeasuredWidth()) / 19;
+				rectf_main.right = rectf_main.left + getMeasuredWidth();
 
 				rectf_main.top = 0;
 				rectf_main.bottom = rectf_main.top + (2 * getMeasuredHeight()) / 19;
 			}
 
 
-			rectf_main_inner.left = rectf_main.left + 5;
-			rectf_main_inner.right = rectf_main.right - 5;
-			rectf_main_inner.top = rectf_main.top + 5;
-			rectf_main_inner.bottom = rectf_main.bottom - 5;
+			rectf_main_inner.left = rectf_main.left + 0;
+			rectf_main_inner.right = rectf_main.right - 0;
+			rectf_main_inner.top = rectf_main.top + 0;
+			rectf_main_inner.bottom = rectf_main.bottom - 0;
 			
 			
 			rectangle_icon.top = rectf_main_inner.top + MARGIN;
@@ -117,24 +118,24 @@ public class BannerView extends View implements OnTouchListener {
 			rectangle_icon.left = rectf_main_inner.left + MARGIN;
 			rectangle_icon.right = rectangle_icon.left + (rectangle_icon.bottom - rectangle_icon.top) - MARGIN;
 			
-			rectangle_type1.top = rectf_main_inner.top + MARGIN;
+			/*rectangle_type1.top = rectf_main_inner.top + MARGIN;
 			rectangle_type1.bottom = rectf_main_inner.top + (rectf_main_inner.bottom - rectf_main_inner.top) / 2 - MARGIN / 2;
 			rectangle_type1.right = rectf_main_inner.right - MARGIN;
 			rectangle_type1.left = rectangle_type1.right - (rectangle_icon.bottom - rectangle_icon.top);// + MARGIN;
-			
+
 			rectangle_type2.top = rectf_main_inner.top + (rectf_main_inner.bottom - rectf_main_inner.top) / 2 + MARGIN / 2;
 			rectangle_type2.bottom = rectf_main_inner.bottom - MARGIN;
 			rectangle_type2.right = rectf_main_inner.right - MARGIN;
-			rectangle_type2.left = rectangle_type2.right - (rectangle_icon.bottom - rectangle_icon.top);// + MARGIN;
-			
+			rectangle_type2.left = rectangle_type2.right - (rectangle_icon.bottom - rectangle_icon.top);// + MARGIN;*/
+
 			
 			rectangle_text1.left = rectangle_icon.right + MARGIN;
-			rectangle_text1.right = rectangle_type1.left - MARGIN;
+			rectangle_text1.right = rectf_main_inner.right - MARGIN;
 			rectangle_text1.top = rectf_main_inner.top + MARGIN;
 			rectangle_text1.bottom = rectf_main_inner.top + (rectf_main_inner.bottom - rectf_main_inner.top) / 2 - MARGIN / 2;
 			
 			rectangle_text2.left = rectangle_icon.right + MARGIN;
-			rectangle_text2.right = rectangle_type1.left - MARGIN;
+			rectangle_text2.right = rectf_main_inner.right - MARGIN;
 			rectangle_text2.top = rectf_main_inner.top + (rectf_main_inner.bottom - rectf_main_inner.top) / 2 + MARGIN / 2;
 			rectangle_text2.bottom = rectf_main_inner.bottom - MARGIN;
 			
@@ -148,24 +149,30 @@ public class BannerView extends View implements OnTouchListener {
 					);
 
 			String appName = getResources().getString(adInfo.getName());
-			appName = appName.substring(0, Math.min(appName.length(), 25));
-			appName += " ...";
+			if (appName.length() > 50) {
+				appName = appName.substring(0, Math.min(appName.length(), 50));
+				appName += " ...";
+			}
 			buttonarea_text1 =   new TextArea(rectangle_text1, true, appName,
 					//coloursCfg.getColour_Delimiter(), coloursCfg.getColour_Square_White(), coloursCfg.getColour_Square_ValidSelection());
 					coloursCfg.getColour_Delimiter(),
 					coloursCfg.getColour_Square_White());
 
 			String promoText1 = getResources().getString(adInfo.getDescription_Line1());
-			promoText1 = promoText1.substring(0, Math.min(promoText1.length(), 50));
-			promoText1 += " ...";
+			if (promoText1.length() > 100) {
+				promoText1 = promoText1.substring(0, Math.min(promoText1.length(), 100));
+				promoText1 += " ...";
+			}
 			buttonarea_text2 =  new TextArea(rectangle_text2, true, promoText1,
 					//coloursCfg.getColour_Delimiter(), coloursCfg.getColour_Square_White(), coloursCfg.getColour_Square_ValidSelection());
 					coloursCfg.getColour_Delimiter(),
 					coloursCfg.getColour_Square_White());
 
 			String promoText2 = getResources().getString(adInfo.getDescription_Line2());
-			promoText2 = promoText2.substring(0, Math.min(promoText2.length(), 50));
-			promoText2 += " ...";
+			if (promoText2.length() > 100) {
+				promoText2 = promoText2.substring(0, Math.min(promoText2.length(), 100));
+				promoText2 += " ...";
+			}
 			buttonarea_text3 =  new TextArea(rectangle_text2, true, promoText2,
 					//coloursCfg.getColour_Delimiter(), coloursCfg.getColour_Square_White(), coloursCfg.getColour_Square_ValidSelection());
 					coloursCfg.getColour_Delimiter(),
@@ -174,7 +181,7 @@ public class BannerView extends View implements OnTouchListener {
 			current_text2 = buttonarea_text2;
 			
 			
-			if (adInfo.isPaid()) {
+			/*if (adInfo.isPaid()) {
 				
 				buttonarea_type1 =   new TextArea(rectangle_type1, true, getResources().getString(R.string.label_advertising_paid_1),
 						coloursCfg.getColour_Delimiter(),
@@ -199,7 +206,7 @@ public class BannerView extends View implements OnTouchListener {
 							coloursCfg.getColour_Delimiter(),
 							coloursCfg.getColour_Square_MarkingSelection());
 				}
-			}
+			}*/
 			
 			
 			//initialized = true;
@@ -239,8 +246,8 @@ public class BannerView extends View implements OnTouchListener {
 		buttonarea_icon.draw(canvas);
 		buttonarea_text1.draw(canvas);
 		current_text2.draw(canvas);
-		buttonarea_type1.draw(canvas);
-		buttonarea_type2.draw(canvas);
+		//buttonarea_type1.draw(canvas);
+		//buttonarea_type2.draw(canvas);
 		
 		invalidate();
 		//System.out.println("View_Achievements_And_Leaderboards_Base> onDraw in rect=" + rectf_main);
