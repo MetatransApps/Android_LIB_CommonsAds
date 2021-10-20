@@ -1,7 +1,6 @@
 package org.metatrans.commons.ads.impl.providers.home_ads;
 
 
-import org.metatrans.commons.R;
 import org.metatrans.commons.cfg.colours.IConfigurationColours;
 //import org.metatrans.commons.cfg.publishedapp.IPublishedApplication;
 import org.metatrans.commons.cfg.publishedapp.IHomeAdInfo;
@@ -29,6 +28,7 @@ public class BannerView extends View implements OnTouchListener {
 	private RectF rectf_main;
 	private RectF rectf_main_inner;
 	private RectF rectangle_icon;
+	private RectF rectangle_text_frame;
 	private RectF rectangle_text1;
 	private RectF rectangle_text2;
 	//private RectF rectangle_type1;
@@ -41,7 +41,7 @@ public class BannerView extends View implements OnTouchListener {
 	private IButtonArea buttonarea_type1;
 	private IButtonArea buttonarea_type2;
 	
-	protected Paint paint_background;
+	protected Paint paint;
 	
 	private IConfigurationColours coloursCfg;
 	private IHomeAdInfo adInfo;
@@ -68,14 +68,15 @@ public class BannerView extends View implements OnTouchListener {
 		rectf_main 						= new RectF();
 		rectf_main_inner 				= new RectF();
 		rectangle_icon 					= new RectF();
+		rectangle_text_frame 			= new RectF();
 		rectangle_text1 				= new RectF();
 		rectangle_text2			 		= new RectF();
 		//rectangle_type1 				= new RectF();
 		//rectangle_type2			 		= new RectF();
 		
-		paint_background 				= new Paint();
+		paint = new Paint();
 		
-		colour_area = coloursCfg.getColour_Background();
+		colour_area = coloursCfg.getColour_Delimiter();
 		
 		setOnTouchListener(this);
 	}
@@ -128,7 +129,7 @@ public class BannerView extends View implements OnTouchListener {
 			rectangle_type2.right = rectf_main_inner.right - MARGIN;
 			rectangle_type2.left = rectangle_type2.right - (rectangle_icon.bottom - rectangle_icon.top);// + MARGIN;*/
 
-			
+
 			rectangle_text1.left = rectangle_icon.right + MARGIN;
 			rectangle_text1.right = rectf_main_inner.right - MARGIN;
 			rectangle_text1.top = rectf_main_inner.top + MARGIN;
@@ -138,45 +139,50 @@ public class BannerView extends View implements OnTouchListener {
 			rectangle_text2.right = rectf_main_inner.right - MARGIN;
 			rectangle_text2.top = rectf_main_inner.top + (rectf_main_inner.bottom - rectf_main_inner.top) / 2 + MARGIN / 2;
 			rectangle_text2.bottom = rectf_main_inner.bottom - MARGIN;
-			
-			
+
+			rectangle_text_frame.left = rectangle_text1.left;
+			rectangle_text_frame.right = rectangle_text1.right;
+			rectangle_text_frame.top = rectangle_text1.top;
+			rectangle_text_frame.bottom = rectangle_text2.bottom;
+
+
 			buttonarea_icon =  new ButtonAreaClick_Image(rectangle_icon,
 					BitmapUtils.fromResource(getContext(), adInfo.getIconResID()),
-					coloursCfg.getColour_Delimiter(),
-					//coloursCfg.getColour_Square_Black(),
+					coloursCfg.getColour_Background(),
 					coloursCfg.getColour_Square_White(),
 					false
 					);
 
 			String appName = getResources().getString(adInfo.getName());
-			if (appName.length() > 50) {
-				appName = appName.substring(0, Math.min(appName.length(), 50));
+			if (appName.length() > 30) {
+				appName = appName.substring(0, Math.min(appName.length(), 30));
 				appName += " ...";
 			}
 			buttonarea_text1 =   new TextArea(rectangle_text1, true, appName,
-					//coloursCfg.getColour_Delimiter(), coloursCfg.getColour_Square_White(), coloursCfg.getColour_Square_ValidSelection());
-					coloursCfg.getColour_Delimiter(),
-					coloursCfg.getColour_Square_White());
+					coloursCfg.getColour_Background(),
+					//Color.rgb(186,255,201));
+					coloursCfg.getColour_Square_ValidSelection());
 
 			String promoText1 = getResources().getString(adInfo.getDescription_Line1());
-			if (promoText1.length() > 100) {
-				promoText1 = promoText1.substring(0, Math.min(promoText1.length(), 100));
+			if (promoText1.length() > 60) {
+				promoText1 = promoText1.substring(0, Math.min(promoText1.length(), 60));
 				promoText1 += " ...";
 			}
 			buttonarea_text2 =  new TextArea(rectangle_text2, true, promoText1,
-					//coloursCfg.getColour_Delimiter(), coloursCfg.getColour_Square_White(), coloursCfg.getColour_Square_ValidSelection());
-					coloursCfg.getColour_Delimiter(),
-					coloursCfg.getColour_Square_White());
+					coloursCfg.getColour_Background(),
+					//Color.rgb(255,223,186));
+					coloursCfg.getColour_Square_MarkingSelection());
 
 			String promoText2 = getResources().getString(adInfo.getDescription_Line2());
-			if (promoText2.length() > 100) {
-				promoText2 = promoText2.substring(0, Math.min(promoText2.length(), 100));
+			if (promoText2.length() > 60) {
+				promoText2 = promoText2.substring(0, Math.min(promoText2.length(), 60));
 				promoText2 += " ...";
 			}
 			buttonarea_text3 =  new TextArea(rectangle_text2, true, promoText2,
 					//coloursCfg.getColour_Delimiter(), coloursCfg.getColour_Square_White(), coloursCfg.getColour_Square_ValidSelection());
-					coloursCfg.getColour_Delimiter(),
-					coloursCfg.getColour_Square_White());
+					coloursCfg.getColour_Background(),
+					//Color.rgb(186,225,255));
+					coloursCfg.getColour_Square_InvalidSelection());
 			
 			current_text2 = buttonarea_text2;
 			
@@ -226,31 +232,40 @@ public class BannerView extends View implements OnTouchListener {
 	protected synchronized void onDraw(Canvas canvas) {
 		
 		counter_switch--;
+
 		if (counter_switch <= 0) {
+
 			counter_switch = MAX_COUNTER_SWITCH;
+
 			if (current_text2 == buttonarea_text2) {
+
 				current_text2 = buttonarea_text3;
+
 			} else {
+
 				current_text2 = buttonarea_text2;
 			}
 		}
-		
+
+
 		super.onDraw(canvas);
+
+
+		paint.setColor(coloursCfg.getColour_Delimiter());
+		DrawingUtils.drawRoundRectangle(canvas, paint, rectf_main);
 		
-		paint_background.setColor(coloursCfg.getColour_Delimiter());
-		DrawingUtils.drawRoundRectangle(canvas, paint_background, rectf_main);
-		
-		paint_background.setColor(colour_area);
-		DrawingUtils.drawRoundRectangle(canvas, paint_background, rectf_main_inner);
-		
+		paint.setColor(colour_area);
+		DrawingUtils.drawRoundRectangle(canvas, paint, rectf_main_inner);
+
+		paint.setColor(coloursCfg.getColour_Delimiter());
+		DrawingUtils.drawRoundRectangle(canvas, paint, rectangle_text_frame, 50);
+
 		buttonarea_icon.draw(canvas);
 		buttonarea_text1.draw(canvas);
 		current_text2.draw(canvas);
-		//buttonarea_type1.draw(canvas);
-		//buttonarea_type2.draw(canvas);
-		
+
+
 		invalidate();
-		//System.out.println("View_Achievements_And_Leaderboards_Base> onDraw in rect=" + rectf_main);
 	}
 	
 	
