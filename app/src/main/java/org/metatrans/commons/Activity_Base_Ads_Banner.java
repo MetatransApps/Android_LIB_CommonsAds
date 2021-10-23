@@ -33,20 +33,8 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 	
 	
 	protected int getGravity() {
-		return Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+		return Gravity.TOP | Gravity.CENTER_HORIZONTAL;
 	}
-	
-	/*
-	@Override
-	protected void onDestroy() {
-		
-		if (getAutoMode_BannerAttachDetach()) detachBanner();
-		
-		current_adLoadFlow = null;
-		
-		super.onDestroy();
-	}
-	 */	
 	
 	
 	@Override
@@ -100,7 +88,9 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 	        ViewGroup frame = getFrame();
 	        
 	        if (Application_Base.getInstance().isTestMode()) {
+
 	            if (frame == null) {
+
 	        		throw new IllegalStateException("Frame is null");
 	        	}
 	        }

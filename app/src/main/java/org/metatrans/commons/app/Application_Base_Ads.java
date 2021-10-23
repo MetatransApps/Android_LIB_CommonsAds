@@ -28,8 +28,8 @@ public abstract class Application_Base_Ads extends Application_Base {
 	public static Application_Base_Ads getInstance() {
 		return (Application_Base_Ads) Application_Base.getInstance();
 	}
-	
-	
+
+
 	public void openInterstitial() {
 		Object activity = getCurrentActivity();
 		if (activity instanceof IActivityInterstitial) {
