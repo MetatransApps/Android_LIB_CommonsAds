@@ -1,4 +1,4 @@
-package org.metatrans.commons.app;
+package org.metatrans.commons;
 
 
 public interface IActivityInterstitial {
