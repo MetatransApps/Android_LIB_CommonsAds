@@ -48,7 +48,7 @@ public abstract class Application_Base_Ads extends Application_Base {
 
 		if (activity instanceof IActivityInterstitial) {
 
-			((IActivityInterstitial)activity).openInterstitial();
+			((IActivityInterstitial) activity).openInterstitial();
 
 		} else {
 
