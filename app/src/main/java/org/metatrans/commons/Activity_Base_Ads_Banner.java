@@ -53,6 +53,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 				current_adLoadFlow_Interstitial = ((Application_Base_Ads)getApplication()).getAdsManager().createFlow_Interstitial_Mixed(getInterstitialName());
 				((Application_Base_Ads)getApplication()).getAdsManager().putCachedFlow(getInterstitialName(), current_adLoadFlow_Interstitial);
+
 			} else {
 
 				System.out.println("Activity_Question Interstitial EXISTS");
@@ -76,6 +77,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 
 	protected abstract String getBannerName();
+
 
 	protected String getInterstitialName() {
 		return null;

@@ -2,7 +2,6 @@ package org.metatrans.commons.app;
 
 
 import android.app.Activity;
-import android.app.ActivityManager;
 
 import org.metatrans.commons.IActivityInterstitial;
 import org.metatrans.commons.ads.api.IAdsConfigurations;
@@ -10,9 +9,6 @@ import org.metatrans.commons.ads.impl.AdsManager;
 import org.metatrans.commons.analytics.Analytics_ActivitiesStack;
 import org.metatrans.commons.analytics.IAnalytics;
 import org.metatrans.commons.model.GameData_Base;
-
-import java.util.Iterator;
-import java.util.List;
 
 
 public abstract class Application_Base_Ads extends Application_Base {
