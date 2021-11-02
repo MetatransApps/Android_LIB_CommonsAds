@@ -16,13 +16,16 @@ public abstract class Activity_Loading_Base_Ads extends Activity_Loading_Base {
 	
 	private int HOUSE_AD_VIEW_ID = 571437512;
 	
-	
-	//private IAdLoadFlow current_adLoadFlow_Banner;
+
 	private IAdLoadFlow current_adLoadFlow_Interstitial;
 	
 	
 	protected abstract String getBannerName();
+
+
 	protected abstract String getInterstitialName();
+
+
 	@Override
 	protected abstract IConfigurationColours getColoursCfg();
 	
