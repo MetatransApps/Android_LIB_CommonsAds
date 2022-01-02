@@ -56,6 +56,7 @@ public abstract class AdsContainer_Base implements IAdsContainer {
 	protected abstract Object createBannerListener(AdLoadFlow_Banner flow);
 	protected abstract void destroyBanner(Object ad);
 	protected abstract void request_sync_banner(final View adview);
+	
 	protected void request_sync_banner(final View adview, AdLoadFlow_Banner flow) {
 		request_sync_banner(adview);
 	}
@@ -222,6 +223,7 @@ public abstract class AdsContainer_Base implements IAdsContainer {
 					request_sync_banner(adview, flow);
 					
 				} catch(Exception e) {
+
 					e.printStackTrace();
 					
 					flow.loadFailed();

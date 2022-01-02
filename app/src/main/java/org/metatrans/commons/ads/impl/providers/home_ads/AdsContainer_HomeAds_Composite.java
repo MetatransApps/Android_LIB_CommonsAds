@@ -26,7 +26,7 @@ public class AdsContainer_HomeAds_Composite extends AdsContainer_HomeAds_BaseImp
 
 		containers = new ArrayList<AdsContainer_HomeAds_BaseImpl>();
 
-		int storeID = Application_Base.getInstance().getAppStore().getID();
+		int storeID = ((Application_Base)context).getAppStore().getID();
 
 		for(int i=0; i < _containers.size(); i++) {
 
