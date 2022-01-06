@@ -25,7 +25,7 @@ public abstract class Application_Base_Ads extends Application_Base {
 		super.onCreate();
 		//Called when the application is starting, before any other application objects have been created.
 		
-		System.out.println("Application_EC: onCreate called " + System.currentTimeMillis());
+		System.out.println("Application_Base_Ads: onCreate called " + System.currentTimeMillis());
 	}
 
 
