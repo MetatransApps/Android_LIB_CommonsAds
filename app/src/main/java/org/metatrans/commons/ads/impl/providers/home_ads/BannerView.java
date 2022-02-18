@@ -1,6 +1,7 @@
 package org.metatrans.commons.ads.impl.providers.home_ads;
 
 
+import org.metatrans.commons.ads.R;
 import org.metatrans.commons.cfg.colours.IConfigurationColours;
 //import org.metatrans.commons.cfg.publishedapp.IPublishedApplication;
 import org.metatrans.commons.cfg.publishedapp.IHomeAdInfo;
@@ -31,7 +32,7 @@ public class BannerView extends View implements OnTouchListener {
 	private RectF rectangle_text_frame;
 	private RectF rectangle_text1;
 	private RectF rectangle_text2;
-	//private RectF rectangle_type1;
+	private RectF rectangle_type1;
 	//private RectF rectangle_type2;
 	
 	private IButtonArea buttonarea_icon;
@@ -39,7 +40,7 @@ public class BannerView extends View implements OnTouchListener {
 	private IButtonArea buttonarea_text2;
 	private IButtonArea buttonarea_text3;
 	private IButtonArea buttonarea_type1;
-	private IButtonArea buttonarea_type2;
+	//private IButtonArea buttonarea_type2;
 	
 	protected Paint paint;
 	
@@ -71,7 +72,7 @@ public class BannerView extends View implements OnTouchListener {
 		rectangle_text_frame 			= new RectF();
 		rectangle_text1 				= new RectF();
 		rectangle_text2			 		= new RectF();
-		//rectangle_type1 				= new RectF();
+		rectangle_type1 				= new RectF();
 		//rectangle_type2			 		= new RectF();
 		
 		paint = new Paint();
@@ -118,23 +119,22 @@ public class BannerView extends View implements OnTouchListener {
 			rectangle_icon.bottom = rectf_main_inner.bottom - MARGIN;
 			rectangle_icon.left = rectf_main_inner.left + MARGIN;
 			rectangle_icon.right = rectangle_icon.left + (rectangle_icon.bottom - rectangle_icon.top) - MARGIN;
-			
-			/*rectangle_type1.top = rectf_main_inner.top + MARGIN;
-			rectangle_type1.bottom = rectf_main_inner.top + (rectf_main_inner.bottom - rectf_main_inner.top) / 2 - MARGIN / 2;
-			rectangle_type1.right = rectf_main_inner.right - MARGIN;
-			rectangle_type1.left = rectangle_type1.right - (rectangle_icon.bottom - rectangle_icon.top);// + MARGIN;
 
-			rectangle_type2.top = rectf_main_inner.top + (rectf_main_inner.bottom - rectf_main_inner.top) / 2 + MARGIN / 2;
+			rectangle_text1.left = rectangle_icon.right + MARGIN;
+			rectangle_text1.right = rectf_main_inner.right - MARGIN - (rectf_main_inner.right - rectf_main_inner.left) / 5;
+			rectangle_text1.top = rectf_main_inner.top + MARGIN;
+			rectangle_text1.bottom = rectf_main_inner.top + (rectf_main_inner.bottom - rectf_main_inner.top) / 2 - MARGIN / 2;
+
+			rectangle_type1.top = rectf_main_inner.top + MARGIN;
+			rectangle_type1.bottom = rectf_main_inner.top + (rectf_main_inner.bottom - rectf_main_inner.top) / 2 - MARGIN / 2;
+			rectangle_type1.left = rectangle_text1.right;
+			rectangle_type1.right = rectf_main_inner.right - MARGIN;
+
+			/*rectangle_type2.top = rectf_main_inner.top + (rectf_main_inner.bottom - rectf_main_inner.top) / 2 + MARGIN / 2;
 			rectangle_type2.bottom = rectf_main_inner.bottom - MARGIN;
 			rectangle_type2.right = rectf_main_inner.right - MARGIN;
 			rectangle_type2.left = rectangle_type2.right - (rectangle_icon.bottom - rectangle_icon.top);// + MARGIN;*/
 
-
-			rectangle_text1.left = rectangle_icon.right + MARGIN;
-			rectangle_text1.right = rectf_main_inner.right - MARGIN;
-			rectangle_text1.top = rectf_main_inner.top + MARGIN;
-			rectangle_text1.bottom = rectf_main_inner.top + (rectf_main_inner.bottom - rectf_main_inner.top) / 2 - MARGIN / 2;
-			
 			rectangle_text2.left = rectangle_icon.right + MARGIN;
 			rectangle_text2.right = rectf_main_inner.right - MARGIN;
 			rectangle_text2.top = rectf_main_inner.top + (rectf_main_inner.bottom - rectf_main_inner.top) / 2 + MARGIN / 2;
@@ -187,23 +187,24 @@ public class BannerView extends View implements OnTouchListener {
 			current_text2 = buttonarea_text2;
 			
 			
-			/*if (adInfo.isPaid()) {
+			if (adInfo.isPaid()) {
 				
-				buttonarea_type1 =   new TextArea(rectangle_type1, true, getResources().getString(R.string.label_advertising_paid_1),
-						coloursCfg.getColour_Delimiter(),
-						coloursCfg.getColour_Square_MarkingSelection());
+				buttonarea_type1 =   new TextArea(rectangle_type1, false,
+						getResources().getString(R.string.label_advertising_paid_1),
+						coloursCfg.getColour_Square_MarkingSelection(),
+						Color.WHITE);
 
-				buttonarea_type2 =  new TextArea(rectangle_type2, true, getResources().getString(R.string.label_advertising_paid_2),
+				/*buttonarea_type2 =  new TextArea(rectangle_type2, true, getResources().getString(R.string.label_advertising_paid_2),
 						coloursCfg.getColour_Delimiter(),
-						coloursCfg.getColour_Square_MarkingSelection());
+						coloursCfg.getColour_Square_MarkingSelection());*/
 				
 			} else {
 				
-				buttonarea_type1 =   new TextArea(rectangle_type1, true, getResources().getString(R.string.label_advertising_free_1),
-						coloursCfg.getColour_Delimiter(),
-						coloursCfg.getColour_Square_ValidSelection());
+				buttonarea_type1 =   new TextArea(rectangle_type1, false, getResources().getString(R.string.label_advertising_free_1),
+						coloursCfg.getColour_Square_MarkingSelection(),
+						Color.WHITE);
 
-				if (adInfo.hasAds()) {
+				/*if (adInfo.hasAds()) {
 					buttonarea_type2 = new TextArea(rectangle_type2, true, getResources().getString(R.string.label_advertising_free_2),
 							coloursCfg.getColour_Delimiter(),
 							coloursCfg.getColour_Square_ValidSelection());
@@ -211,8 +212,8 @@ public class BannerView extends View implements OnTouchListener {
 					buttonarea_type2 =  new TextArea(rectangle_type2, true, getResources().getString(R.string.label_advertising_paid_2),
 							coloursCfg.getColour_Delimiter(),
 							coloursCfg.getColour_Square_MarkingSelection());
-				}
-			}*/
+				}*/
+			}
 			
 			
 			//initialized = true;
@@ -264,6 +265,9 @@ public class BannerView extends View implements OnTouchListener {
 		buttonarea_text1.draw(canvas);
 		current_text2.draw(canvas);
 
+		//Ads
+		buttonarea_type1.draw(canvas);
+		//buttonarea_type2.draw(canvas);
 
 		invalidate();
 	}
