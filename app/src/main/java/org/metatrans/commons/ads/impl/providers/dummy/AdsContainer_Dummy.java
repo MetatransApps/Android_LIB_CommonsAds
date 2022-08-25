@@ -20,42 +20,42 @@ public class AdsContainer_Dummy implements IAdsContainer {
 	
 	@Override
 	public void onCreate_Container(Context _app_context) {
-		// TODO Auto-generated method stub
 		
+		//Do nothing
 	}
 	
 	
 	@Override
 	public void removeInterstitial(String adID, AdLoadFlow_Interstitial flow) {
-		// TODO Auto-generated method stub
-		
+
+		//Do nothing
 	}
 	
 	
 	@Override
 	public void attach(AdLoadFlow_Banner flow) {
-		// TODO Auto-generated method stub
-		
+
+		flow.loadOK();
 	}
 	
 	
 	@Override
 	public void detach(AdLoadFlow_Banner flow) {
-		// TODO Auto-generated method stub
-		
+
+		//Do nothing
 	}
 	
 	
 	@Override
 	public void requestInterstitial(AdLoadFlow_Interstitial flow) {
-		// TODO Auto-generated method stub
-		
+
+		flow.loadOK();
 	}
 
 
 	@Override
 	public void initInterstitial(AdLoadFlow_Interstitial flow) {
-		// TODO Auto-generated method stub
-		
+
+		//Do nothing
 	}
 }
