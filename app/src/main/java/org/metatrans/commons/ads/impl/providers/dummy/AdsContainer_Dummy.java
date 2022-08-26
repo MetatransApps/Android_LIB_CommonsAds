@@ -20,7 +20,7 @@ public class AdsContainer_Dummy implements IAdsContainer {
 	
 	@Override
 	public void onCreate_Container(Context _app_context) {
-		
+
 		//Do nothing
 	}
 	
@@ -36,6 +36,7 @@ public class AdsContainer_Dummy implements IAdsContainer {
 	public void attach(AdLoadFlow_Banner flow) {
 
 		flow.loadOK();
+		flow.pause();
 	}
 	
 	
@@ -50,6 +51,7 @@ public class AdsContainer_Dummy implements IAdsContainer {
 	public void requestInterstitial(AdLoadFlow_Interstitial flow) {
 
 		flow.loadOK();
+		flow.pause();
 	}
 
 
