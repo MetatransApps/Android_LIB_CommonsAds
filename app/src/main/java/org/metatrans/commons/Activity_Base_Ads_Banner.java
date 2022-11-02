@@ -18,7 +18,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 	private boolean isBannerAttached;
 
-	private static long timestamp_last_ad_openning;
+	private static volatile long timestamp_last_ad_openning;
 
 
 	private IAdLoadFlow current_adLoadFlow_Interstitial;
@@ -30,7 +30,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 		super.onCreate(savedInstanceState);
 
 		//Skip ads first 1 minute
-		//TODO timestamp_last_ad_openning = System.nanoTime();
+		timestamp_last_ad_openning = System.currentTimeMillis();
 	}
 
 
