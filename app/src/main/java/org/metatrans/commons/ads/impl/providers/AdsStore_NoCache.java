@@ -41,6 +41,7 @@ public class AdsStore_NoCache {
 			returnBanner(adID);
 			//throw new IllegalStateException();
 		}
+
 		ads.put(adID, adview);
 
 		System.out.println("AdsStore_NoCache: getBanner " + adID + " = " + adview);
@@ -100,22 +101,19 @@ public class AdsStore_NoCache {
 		System.out.println("AdsStore_NoCache: returnInterstitial " + adID);
 		
 		Object interstitialAd = ads.remove(adID);
+
 		if (interstitialAd != null) {
+
+			System.out.println("AdsStore_NoCache: returned OBJ = " + interstitialAd);
+
 			adsContainer.destroyInterstitial(interstitialAd);
-			
-			//Re-create ad in order to load it in advance
-			if (adsContainer.getActivity() != null) {//NPE in ad constructor otherwise
-				interstitialAd = adsContainer.createInterstitial(flow);
-				ads.put(flow.getAdID(), interstitialAd);
-			}
-			
-		} else {
-			//Do nothing
 		}
-		
-		System.out.println("AdsStore_NoCache: returned OBJ = " + interstitialAd);
-		
-		
-		//(new Exception()).printStackTrace();
+
+		//Re-create the ad in order to load it upfront and now wait when it is necessary to show.
+		interstitialAd = adsContainer.createInterstitial(flow);
+
+		System.out.println("AdsStore_NoCache.returnInterstitial(...): Pre-load Interstitial, interstitialAd=" + interstitialAd);
+
+		ads.put(flow.getAdID(), interstitialAd);
 	}
 }

@@ -11,7 +11,12 @@ import android.content.Context;
 
 public class AdsContainer_Dummy implements IAdsContainer {
 	
-	
+
+	public AdsContainer_Dummy(Context context) {
+
+	}
+
+
 	@Override
 	public int getProviderID() {
 		return IAdsProviders.ID_DUMMY;

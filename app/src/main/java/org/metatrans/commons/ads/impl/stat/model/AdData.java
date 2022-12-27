@@ -8,22 +8,40 @@ public class AdData implements Serializable {
 	
 	
 	private static final long serialVersionUID = -9128630685104730167L;
-	
-	
-	long requests;
-	long impressions;
-	long clicks;
+
+
+	long created 		= System.currentTimeMillis();
+	long requests 		= 100;
+	long impressions 	= 10;
+	long clicks 		= 1;
+
 	long time_accumulative_load; //in ms
 	
 	
 	public AdData(int defaultAccLoadTime) {
-		requests = 10;
-		impressions = 10;
-		clicks = 1;
+
 		time_accumulative_load = impressions * defaultAccLoadTime;
 	}
-	
-	
+
+
+	public long getImpressions() {
+
+		return impressions;
+	}
+
+
+	public long getCreatedTimeInMillis() {
+
+		//Will be 0 after the deserialization of an object from the old class version.
+		if (created == 0) {
+
+			created = System.currentTimeMillis();
+		}
+
+		return created;
+	}
+
+
 	public double getFillRate() {
 		return impressions / (double) requests;
 	}

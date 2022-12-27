@@ -20,7 +20,7 @@ import android.content.Context;
 public class AdStorageUtils {
 	
 	
-	private static final String FILE_NAME = "addstorage";
+	private static final String FILE_NAME = "adstorage";
 	
 	
 	public static Object[] readStorage(Context context) throws Exception {
@@ -37,8 +37,8 @@ public class AdStorageUtils {
 				InputStream buffer = new BufferedInputStream(is);
 				input = new ObjectInputStream(buffer);
 				
-				objs[0] = (AdsData) input.readObject();
-				objs[1] = (AdsData) input.readObject();
+				objs[0] = input.readObject();
+				objs[1] = input.readObject();
 				
 				//System.out.println("READ GAMEDATA: MOVES COUNT" + ((GameData_Base)objs[0]).getMoves().size());
 			}
@@ -59,6 +59,7 @@ public class AdStorageUtils {
 	
 	
 	public static void writeStore(Context context, AdsData adsData1, AdsData adsData2) {
+
 		ObjectOutput output = null;
 		
 		try {

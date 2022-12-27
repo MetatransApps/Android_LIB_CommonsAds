@@ -10,6 +10,8 @@ public interface IAdsConfiguration {
 	public static final String AD_ID_BANNER3 					= "BANNER3";
 	public static final String AD_ID_INTERSTITIAL1 				= "INTERSTITIAL1";
 
+
+	public String getContainerClass();
 	
 	public String[] getUnitIDs_Banners();
 	

@@ -84,16 +84,19 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 	
 
 	public boolean isActive() {
+
 		return isActive;
 	}
 	
 	
 	protected boolean isLoading() {
+
 		return isLoading;
 	}
 
 
-	public ExecutorService getExecutor() {
+	private ExecutorService getExecutor() {
+
 		return executor;
 	}
 	
@@ -214,7 +217,9 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 			current_retry_job = null;
 			
 			if (!isActive()) {
+
 				System.out.println("AdLoadFlow_Base: loadFailed for container " + getCurrentContainer() + " - exit because the flow is not active");
+
 				return;
 			}
 		}
@@ -227,18 +232,23 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 			public void run() {
 				
 				try {
+
 					long wait_time = RETRY_WAIT_TIME * Math.max(1, counter);
+
 					System.out.println("AdLoadFlow_Base: scheduling wait time is " + wait_time + ", now waiting ...");
+
 					Thread.sleep(wait_time);
+
 					System.out.println("AdLoadFlow_Base: scheduling wait finished current_retry_job = " + current_retry_job);
 					
 				} catch (InterruptedException e) {}
 				
-				current_retry_job = new Retry();
-				
-				getUiHandler().post(current_retry_job);	
+					current_retry_job = new Retry();
+
+					getUiHandler().post(current_retry_job);
+				}
 			}
-		});
+		);
 	}
 	
 	

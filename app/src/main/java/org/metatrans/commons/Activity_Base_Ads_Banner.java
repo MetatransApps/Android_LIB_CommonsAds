@@ -157,11 +157,13 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 
 	@Override
-	public void openInterstitial() {
+	public boolean openInterstitial() {
+
+		boolean success = false;
 
 		try {
 
-			System.out.println("Activity_Question openInterstitial called");
+			System.out.println("Activity_Base_Ads_Banner.openInterstitial(): called");
 
 			long now = System.currentTimeMillis();
 
@@ -171,17 +173,23 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 					current_adLoadFlow_Interstitial.resume();
 
-					System.out.println("Activity_Question openInterstitial RESUMED");
+					System.out.println("Activity_Base_Ads_Banner.openInterstitial(): RESUMED");
+
+					success = true;
 				}
 
 				timestamp_last_ad_openning = now;
 
 			} else {
-				System.out.println("Activity_Question openInterstitial SKIPPED");
+
+				System.out.println("Activity_Base_Ads_Banner.openInterstitial(): SKIPPED (to not show too often)");
 			}
 
 		} catch(Throwable t) {
+
 			t.printStackTrace();
 		}
+
+		return success;
 	}
 }

@@ -5,6 +5,7 @@ import android.app.Activity;
 
 import org.metatrans.commons.IActivityInterstitial;
 import org.metatrans.commons.ads.api.IAdsConfigurations;
+import org.metatrans.commons.ads.impl.AdsConfigurations_DynamicImpl;
 import org.metatrans.commons.ads.impl.AdsManager;
 import org.metatrans.commons.analytics.Analytics_ActivitiesStack;
 import org.metatrans.commons.analytics.IAnalytics;
@@ -18,18 +19,25 @@ public abstract class Application_Base_Ads extends Application_Base {
 
 	private IAnalytics acitvities_stack = new Analytics_ActivitiesStack();
 
+	private IAdsConfigurations adsConfigurations;
+
 
 	@Override
 	public void onCreate() {
-		
+
 		super.onCreate();
 		//Called when the application is starting, before any other application objects have been created.
 		
 		System.out.println("Application_Base_Ads: onCreate called " + System.currentTimeMillis());
+
+		adsConfigurations = new AdsConfigurations_DynamicImpl();
 	}
 
 
-	public abstract IAdsConfigurations getAdsConfigurations();
+	public IAdsConfigurations getAdsConfigurations() {
+
+		return adsConfigurations;
+	}
 
 
 	public static Application_Base_Ads getInstance() {
@@ -38,13 +46,13 @@ public abstract class Application_Base_Ads extends Application_Base {
 	}
 
 
-	public void openInterstitial() {
+	public boolean openInterstitial() {
 
 		Object activity = getInterstitialActivity();
 
 		if (activity instanceof IActivityInterstitial) {
 
-			((IActivityInterstitial) activity).openInterstitial();
+			return ((IActivityInterstitial) activity).openInterstitial();
 
 		} else {
 
@@ -53,6 +61,8 @@ public abstract class Application_Base_Ads extends Application_Base {
 				throw new IllegalStateException("Not in IActivityInterstitial");
 			}
 		}
+
+		return false;
 	}
 
 
