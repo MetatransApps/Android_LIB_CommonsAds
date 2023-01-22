@@ -485,11 +485,16 @@ public class AdsManager {
 		AdLoadFlow_Interstitial flow = new AdLoadFlow_Interstitial(adID, containers_sequance, adsData_interstitial, uiHandler, executor);
 		
 		List<IAdsContainer> containers = containers_sequance.getAdsContainers();
+
 		for (IAdsContainer container: containers) {
+
 			try {
+
 				container.initInterstitial(flow);
+
 			} catch (Throwable t) {
-				//Print the error and continue with what we have as containers
+
+				//Print the error and continue with what we have as successfully initialized containers
 				t.printStackTrace();
 			}
 		}

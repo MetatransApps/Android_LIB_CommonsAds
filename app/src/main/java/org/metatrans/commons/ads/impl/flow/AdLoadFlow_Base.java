@@ -10,6 +10,7 @@ import org.metatrans.commons.ads.impl.sequence.IAdsContainerSequence;
 import org.metatrans.commons.ads.impl.stat.model.AdData;
 import org.metatrans.commons.ads.impl.stat.model.AdDataUtils;
 import org.metatrans.commons.ads.impl.stat.model.AdsData;
+import org.metatrans.commons.app.Application_Base;
 
 import android.os.Handler;
 
@@ -111,7 +112,9 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 		
 		long mem_mb = DeviceUtils.getAvailableMemory_InMB();
 		System.out.println("AdLoadFlow_Base: AD FLOW: resume - " + getAdID() + " available memory is " + mem_mb + " MB");
+
 		if (mem_mb <= 3) { //3 MB for buffer should be enough for 1 ad)
+
 			System.out.println("AD FLOW: resume - SKIPPED, because available memory is " + mem_mb + " MB");
 			return;
 		}
@@ -119,13 +122,20 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 		if(isLoading()) {
 			//Do nothing
 			System.out.println("AdLoadFlow_Base: AdLoadFlow is already in loading mode. adID=" + getAdID() + ", obj=" + this);
+
 		} else {
 			
 			if (!isDetached) {
+
 				System.out.println("AdLoadFlow_Base : AdLoadFlow is attached but resume is called. adID=" + getAdID() + ", obj=" + this);
+
 				if (!isActive()) {
-					//throw new IllegalStateException("AdLoadFlow is not active but is attached and resume is called. adID=" + getAdID() + ", obj=" + this);
-					//TODO: CHECK this
+
+					if (Application_Base.getInstance().isTestMode()) {
+						throw new IllegalStateException("AdLoadFlow is not active but is attached and resume is called. adID=" + getAdID() + ", obj=" + this);
+						//TODO: CHECK this
+					}
+
 					isActive = true;
 				}
 			} else {
@@ -274,22 +284,34 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 	
 	
 	protected synchronized void startLoading() {
-		if (!isActive()) {
-			throw new IllegalStateException("AdLoadFlow_Base: AdLoadFlow is not active. adID=" +adID + ", obj=" + this);
+
+		if (Application_Base.getInstance().isTestMode()) {
+
+			if (!isActive()) {
+
+				throw new IllegalStateException("AdLoadFlow_Base: AdLoadFlow is not active. adID=" + adID + ", obj=" + this);
+			}
+
+			if (isLoading()) {
+
+				throw new IllegalStateException("AdLoadFlow_Base: AdLoadFlow is already in loading mode. adID=" + adID + ", obj=" + this);
+			}
 		}
-		if (isLoading()) {
-			throw new IllegalStateException("AdLoadFlow_Base: AdLoadFlow is already in loading mode. adID=" +adID + ", obj=" + this);
-		}
-		
+
 		isLoading = true;
 	}
 	
 	
 	protected synchronized void stopLoading() {
-		if (!isLoading()) {
-			//throw new IllegalStateException("AdLoadFlow is not in loading mode. adID=" +adID + ", obj=" + this);
+
+		if (Application_Base.getInstance().isTestMode()) {
+
+			if (!isLoading()) {
+
+				throw new IllegalStateException("AdLoadFlow is not in loading mode. adID=" +adID + ", obj=" + this);
+			}
 		}
-		
+
 		isLoading = false;
 	}
 	

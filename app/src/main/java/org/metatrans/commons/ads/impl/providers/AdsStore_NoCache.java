@@ -110,10 +110,12 @@ public class AdsStore_NoCache {
 		}
 
 		//Re-create the ad in order to load it upfront and now wait when it is necessary to show.
-		interstitialAd = adsContainer.createInterstitial(flow);
+		//!!! This should be already done in the Activity_Base_Ads_Banner.onResume(...)
+		/*interstitialAd = adsContainer.createInterstitial(flow);
 
 		System.out.println("AdsStore_NoCache.returnInterstitial(...): Pre-load Interstitial, interstitialAd=" + interstitialAd);
 
 		ads.put(flow.getAdID(), interstitialAd);
+		*/
 	}
 }

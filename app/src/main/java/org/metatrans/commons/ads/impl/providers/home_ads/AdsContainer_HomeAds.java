@@ -44,8 +44,9 @@ public class AdsContainer_HomeAds extends AdsContainer_HomeAds_BaseImpl {
 
 
 	@Override
-	protected boolean openTarget(IHomeAdInfo promoted) {
-		return WebUtils.openApplicationStorePage(getActivity(), (IPublishedApplication) promoted);
+	protected void openTarget(IHomeAdInfo promoted) {
+
+		WebUtils.openApplicationStorePage(getActivity(), (IPublishedApplication) promoted);
 	}
 
 

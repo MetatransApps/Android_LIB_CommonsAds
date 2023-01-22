@@ -12,16 +12,16 @@ import android.widget.FrameLayout;
 
 
 public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Activity_Base implements IActivityInterstitial {
-	
-	
-	private IAdLoadFlow current_adLoadFlow;
 
-	private boolean isBannerAttached;
 
-	private static volatile long timestamp_last_ad_openning;
+	private static volatile long timestamp_last_interstitial_ad_openning;
 
+
+	private IAdLoadFlow current_adLoadFlow_Banner;
 
 	private IAdLoadFlow current_adLoadFlow_Interstitial;
+
+	private boolean isBannerAttached;
 
 
 	@Override
@@ -30,37 +30,30 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 		super.onCreate(savedInstanceState);
 
 		//Skip ads first 1 minute
-		timestamp_last_ad_openning = System.currentTimeMillis();
+		timestamp_last_interstitial_ad_openning = System.currentTimeMillis();
 	}
 
 
 	@Override
 	protected void onResume() {
 
+
 		System.out.println("Activity_Base_Ads_Banner: onResume()");
+
 
 		super.onResume();
 
-		attachBanner();
 
-		if (getInterstitialName() != null) {
+		//try-catch ensures no errors, because of ads logic.
+		try {
 
-			current_adLoadFlow_Interstitial = ((Application_Base_Ads)getApplication()).getAdsManager().getCachedFlow(getInterstitialName());
+			attachBanner();
 
-			if (current_adLoadFlow_Interstitial == null) {
+			preloadInterstitial();
 
-				System.out.println("Activity_Question create Interstitial");
+		} catch(Throwable t) {
 
-				current_adLoadFlow_Interstitial = ((Application_Base_Ads)getApplication()).getAdsManager().createFlow_Interstitial_Mixed(getInterstitialName());
-				((Application_Base_Ads)getApplication()).getAdsManager().putCachedFlow(getInterstitialName(), current_adLoadFlow_Interstitial);
-
-			} else {
-
-				System.out.println("Activity_Question Interstitial EXISTS");
-
-				//current_adLoadFlow_Interstitial.cleanCurrent();
-				current_adLoadFlow_Interstitial.pause();
-			}
+			t.printStackTrace();
 		}
 	}
 
@@ -68,9 +61,20 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 	@Override
 	protected void onPause() {
 
+
 		System.out.println("Activity_Base_Ads_Banner: onPause()");
 
-		detachBanner();
+
+		//try-catch ensures no errors, because of ads logic.
+		try {
+
+			detachBanner();
+
+		} catch(Throwable t) {
+
+			t.printStackTrace();
+		}
+
 
 		super.onPause();
 	}
@@ -95,63 +99,83 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 	protected boolean isBannerAttached() {
 		return isBannerAttached;
 	}
-	
-	
-	protected void detachBanner() {
-		
-		try {
-	        
-			if (current_adLoadFlow != null) {
-				current_adLoadFlow.pause();
-				current_adLoadFlow = null;
+
+
+	protected void attachBanner() {
+			
+		ViewGroup frame = getFrame();
+
+		if (Application_Base.getInstance().isTestMode()) {
+
+			if (frame == null) {
+
+				throw new IllegalStateException("Frame is null");
 			}
-			
-			isBannerAttached = false;
-			
-		} catch(Exception e) {
-			e.printStackTrace();
+		}
+
+		if (frame != null) {
+
+			//System.out.println("Activity_Base_Ads_Banner: attachBanner() frame.isShown = " + frame.isShown());
+
+			if (current_adLoadFlow_Banner != null) {
+				throw new IllegalStateException("current_adLoadFlow is NOT null");
+			}
+
+			if (getBannerName() != null /*&& DeviceUtils.isConnectedOrConnecting(this)*/) {
+				current_adLoadFlow_Banner = ((Application_Base_Ads)getApplication()).getAdsManager().createFlow_Banner_Mixed(frame, getBannerName(), getGravity());
+			}
+
+			if (current_adLoadFlow_Banner != null) {
+
+				System.out.println("Activity_Base_Ads_Banner: attachBanner() - resume add");
+
+				current_adLoadFlow_Banner.resume();
+
+				isBannerAttached = true;
+			}
 		}
 	}
-	
-	
-	protected void attachBanner() {
-		
-		try {
-			
-	        ViewGroup frame = getFrame();
-	        
-	        if (Application_Base.getInstance().isTestMode()) {
 
-	            if (frame == null) {
 
-	        		throw new IllegalStateException("Frame is null");
-	        	}
-	        }
-	        
-	        if (frame != null) {
-	        	
-				//System.out.println("Activity_Base_Ads_Banner: attachBanner() frame.isShown = " + frame.isShown());
-				
-				if (current_adLoadFlow != null) {
-					throw new IllegalStateException("current_adLoadFlow is NOT null");
+	protected void detachBanner() {
+
+		if (current_adLoadFlow_Banner != null) {
+
+			current_adLoadFlow_Banner.pause();
+
+			current_adLoadFlow_Banner = null;
+		}
+
+		isBannerAttached = false;
+	}
+
+
+	private void preloadInterstitial() {
+
+
+		if (getInterstitialName() != null) {
+
+
+			current_adLoadFlow_Interstitial = ((Application_Base_Ads)getApplication()).getAdsManager().getCachedFlow(getInterstitialName());
+
+
+			if (current_adLoadFlow_Interstitial == null) {
+
+				System.out.println("Activity_Question create Interstitial");
+
+				current_adLoadFlow_Interstitial = ((Application_Base_Ads)getApplication()).getAdsManager().createFlow_Interstitial_Mixed(getInterstitialName());
+				((Application_Base_Ads)getApplication()).getAdsManager().putCachedFlow(getInterstitialName(), current_adLoadFlow_Interstitial);
+
+			} else {
+
+				System.out.println("Activity_Question Interstitial EXISTS");
+
+				if (current_adLoadFlow_Interstitial.isActive()) {
+
+					//current_adLoadFlow_Interstitial.cleanCurrent();
+					current_adLoadFlow_Interstitial.pause();
 				}
-				
-				if (getBannerName() != null /*&& DeviceUtils.isConnectedOrConnecting(this)*/) {
-					current_adLoadFlow = ((Application_Base_Ads)getApplication()).getAdsManager().createFlow_Banner_Mixed(frame, getBannerName(), getGravity());
-				}				
-				
-				if (current_adLoadFlow != null) {
-					
-					System.out.println("Activity_Base_Ads_Banner: attachBanner() - resume add");
-					
-					current_adLoadFlow.resume();
-					
-					isBannerAttached = true;
-				}
-	        }
-			
-		} catch (Exception e) {
-			e.printStackTrace();
+			}
 		}
 	}
 
@@ -167,7 +191,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 			long now = System.currentTimeMillis();
 
-			if (now >= timestamp_last_ad_openning + 60 * 1000) {
+			if (now >= timestamp_last_interstitial_ad_openning + 60 * 1000) {
 
 				if (current_adLoadFlow_Interstitial != null) {
 
@@ -178,7 +202,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 					success = true;
 				}
 
-				timestamp_last_ad_openning = now;
+				timestamp_last_interstitial_ad_openning = now;
 
 			} else {
 

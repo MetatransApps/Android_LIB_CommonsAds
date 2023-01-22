@@ -387,7 +387,8 @@ public class BannerView extends View implements OnTouchListener {
 	}
 
 
-	public boolean openTarget() {
-		return homeAdsContainer.openTarget(adInfo);
+	public void openTarget() {
+
+		homeAdsContainer.openTarget(adInfo);
 	}
 }

@@ -48,7 +48,7 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
 
 
     //Return true if opened successfully
-    protected abstract boolean openTarget(IHomeAdInfo promoted);
+    protected abstract void openTarget(IHomeAdInfo promoted);
 
 
     protected abstract Intent createInterstitialIntent(Activity currentActivity);
@@ -212,33 +212,27 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
 
             if (promoted != null) {
 
-                boolean ok = openTarget(promoted);
+                openTarget(promoted);
 
-                if (ok) {
+                flow.loadOK();
 
-                    flow.loadOK();
+                try {
 
-                    /**
-                     * Clearer implementation will be to handle back button on the opened activity
-                     * and than to cleanCurrent in order to set isDetached flag of flow to true
-                     */
-                    //flow.cleanCurrent();
+                    IEventsManager eventsManager = Application_Base.getInstance().getEventsManager();
 
-                    try {
-                        IEventsManager eventsManager = Application_Base.getInstance().getEventsManager();
-                        Context context = (getActivity() != null) ? getActivity() : Application_Base.getInstance();
-                        eventsManager.register(context,
-                                eventsManager.create(IEvent_Base.MARKETING, IEvent_Base.MARKETING_HOME_AD_INTERSTITIAL_OPENED, promoted.getID().hashCode(),
-                                        "MARKETING", "HOME_AD_INTERSTITIAL_OPENED", "" + promoted.getID()));
-                    } catch(Exception e) {
-                        e.printStackTrace();
-                    }
+                    Context context = (getActivity() != null) ? getActivity() : Application_Base.getInstance();
 
-                } else {
-                    flow.loadFailed();
+                    eventsManager.register(context,
+                            eventsManager.create(IEvent_Base.MARKETING, IEvent_Base.MARKETING_HOME_AD_INTERSTITIAL_OPENED, promoted.getID().hashCode(),
+                                    "MARKETING", "HOME_AD_INTERSTITIAL_OPENED", "" + promoted.getID()));
+
+                } catch(Exception e) {
+
+                    e.printStackTrace();
                 }
 
             } else {
+
                 flow.loadFailed();
             }
         }

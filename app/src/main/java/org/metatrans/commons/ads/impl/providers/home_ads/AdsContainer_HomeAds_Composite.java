@@ -86,8 +86,9 @@ public class AdsContainer_HomeAds_Composite extends AdsContainer_HomeAds_BaseImp
 
 
 	@Override
-	protected boolean openTarget(IHomeAdInfo promoted) {
-		return containers.get(currentContainer_index).openTarget(promoted);
+	protected void openTarget(IHomeAdInfo promoted) {
+
+		containers.get(currentContainer_index).openTarget(promoted);
 	}
 
 
