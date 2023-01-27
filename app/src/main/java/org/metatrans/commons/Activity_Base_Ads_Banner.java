@@ -183,11 +183,16 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 	@Override
 	public boolean openInterstitial() {
 
+		System.out.println("Activity_Base_Ads_Banner.openInterstitial(): called");
+
 		boolean success = false;
 
 		try {
 
-			System.out.println("Activity_Base_Ads_Banner.openInterstitial(): called");
+			if (Application_Base.getInstance().getApp_Me().isPaid()) {
+
+				return success;
+			}
 
 			long now = System.currentTimeMillis();
 
