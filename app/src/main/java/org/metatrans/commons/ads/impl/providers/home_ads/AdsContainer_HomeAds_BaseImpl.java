@@ -195,11 +195,16 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
                 //flow.cleanCurrent();
 
                 try {
+
                     IEventsManager eventsManager = Application_Base.getInstance().getEventsManager();
                     Context context = (getActivity() != null) ? getActivity() : Application_Base.getInstance();
                     eventsManager.register(context,
-                            eventsManager.create(IEvent_Base.MARKETING, IEvent_Base.MARKETING_HOME_AD_INTERSTITIAL_OPENED, "APP_LIST".hashCode(),
-                                    "MARKETING", "HOME_AD_INTERSTITIAL_OPENED", "APP_LIST"));
+                            IEvent_Base.EVENT_MARKETING_HOME_AD_INTERSTITIAL_OPENED.createByVarianceInCategory3(
+                                    "APP_LIST".hashCode(),
+                                    "APP_LIST"
+                            )
+                    );
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -223,8 +228,11 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
                     Context context = (getActivity() != null) ? getActivity() : Application_Base.getInstance();
 
                     eventsManager.register(context,
-                            eventsManager.create(IEvent_Base.MARKETING, IEvent_Base.MARKETING_HOME_AD_INTERSTITIAL_OPENED, promoted.getID().hashCode(),
-                                    "MARKETING", "HOME_AD_INTERSTITIAL_OPENED", "" + promoted.getID()));
+                            IEvent_Base.EVENT_MARKETING_HOME_AD_INTERSTITIAL_OPENED.createByVarianceInCategory3(
+                                    promoted.getID().hashCode(),
+                                    context.getString(promoted.getName())
+                            )
+                    );
 
                 } catch(Exception e) {
 

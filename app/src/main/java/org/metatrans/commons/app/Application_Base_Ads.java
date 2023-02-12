@@ -7,17 +7,15 @@ import org.metatrans.commons.IActivityInterstitial;
 import org.metatrans.commons.ads.api.IAdsConfigurations;
 import org.metatrans.commons.ads.impl.AdsConfigurations_DynamicImpl;
 import org.metatrans.commons.ads.impl.AdsManager;
-import org.metatrans.commons.analytics.Analytics_ActivitiesStack;
-import org.metatrans.commons.analytics.IAnalytics;
 import org.metatrans.commons.model.GameData_Base;
+
+import java.util.List;
 
 
 public abstract class Application_Base_Ads extends Application_Base {
 
 	
 	private AdsManager adsmanager;
-
-	private IAnalytics acitvities_stack = new Analytics_ActivitiesStack();
 
 	private IAdsConfigurations adsConfigurations;
 
@@ -68,12 +66,22 @@ public abstract class Application_Base_Ads extends Application_Base {
 
 	protected Activity getInterstitialActivity() {
 
-		return ((Analytics_ActivitiesStack) getAnalytics()).getInterstitialActivity();
+		List<Activity> stack = getActivitiesStack().getActivitiesStack();
 
-		/* TODO: Use standard Android approach
-		ActivityManager m = (ActivityManager) getSystemService( ACTIVITY_SERVICE );
+		for (Activity current: stack) {
 
-		List<ActivityManager.RunningTaskInfo> runningTaskInfoList =  m.getRunningTasks(10);
+			if (current instanceof IActivityInterstitial) {
+
+				return current;
+			}
+		}
+
+		return null;
+
+		//TODO: Use standard Android approach (if there is any without additional permissions)
+		/*ActivityManager m = (ActivityManager) getSystemService( ACTIVITY_SERVICE );
+
+		List<ActivityManager.RunningTaskInfo> runningTaskInfoList =  m.getRAppTasks();
 
 		Iterator<ActivityManager.RunningTaskInfo> iterator = runningTaskInfoList.iterator();
 
@@ -86,12 +94,6 @@ public abstract class Application_Base_Ads extends Application_Base {
 			int numOfActivities = runningTaskInfo.numActivities;
 			String topActivity = runningTaskInfo.topActivity.getShortClassName();
 		}*/
-	}
-
-
-	@Override
-	public IAnalytics getAnalytics() {
-		return acitvities_stack;
 	}
 
 
