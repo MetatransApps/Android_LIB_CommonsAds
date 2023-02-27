@@ -185,14 +185,17 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 		System.out.println("Activity_Base_Ads_Banner.openInterstitial(): called");
 
-		boolean success = false;
-
 		try {
 
 			if (Application_Base.getInstance().getApp_Me().isPaid()) {
 
-				return success;
+				System.out.println("Activity_Base_Ads_Banner.openInterstitial(): the app is paid - skipping");
+
+				return false;
 			}
+
+
+			boolean success = false;
 
 			long now = System.currentTimeMillis();
 
@@ -214,11 +217,14 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 				System.out.println("Activity_Base_Ads_Banner.openInterstitial(): SKIPPED (to not show too often)");
 			}
 
-		} catch(Throwable t) {
+			return success;
+
+
+		} catch (Throwable t) {
 
 			t.printStackTrace();
-		}
 
-		return success;
+			return false;
+		}
 	}
 }
