@@ -4,7 +4,6 @@ package org.metatrans.commons.menu;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.metatrans.commons.Activity_Base;
 import org.metatrans.commons.Activity_Base_Ads_Banner;
 import org.metatrans.commons.R;
 import org.metatrans.commons.app.Application_Base;

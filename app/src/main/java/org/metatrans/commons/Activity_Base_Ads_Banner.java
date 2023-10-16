@@ -116,7 +116,9 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 			if (frame == null) {
 
-				throw new IllegalStateException("Frame is null");
+				//throw new IllegalStateException("Frame is null");
+
+				return;
 			}
 		}
 
@@ -159,9 +161,11 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 	private void preloadInterstitial() {
 
+		System.out.println("Activity_Base_Ads_Banner.preloadInterstitial(): getInterstitialName()=" + getInterstitialName());
 
 		if (getInterstitialName() != null) {
 
+			System.out.println("Activity_Base_Ads_Banner.preloadInterstitial(): called");
 
 			current_adLoadFlow_Interstitial = ((Application_Base_Ads)getApplication()).getAdsManager().getCachedFlow(getInterstitialName());
 
@@ -238,9 +242,11 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 	private void preloadRewardedVideo() {
 
+		System.out.println("Activity_Base_Ads_Banner.preloadRewardedVideo(): getRewardedVideoName()=" + getRewardedVideoName());
 
 		if (getRewardedVideoName() != null) {
 
+			System.out.println("Activity_Base_Ads_Banner.preloadRewardedVideo(): called");
 
 			current_adLoadFlow_RewardedVideo = ((Application_Base_Ads)getApplication()).getAdsManager().getCachedFlow(getRewardedVideoName());
 
@@ -260,6 +266,10 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 					//current_adLoadFlow_RewardedVideo.cleanCurrent();
 					current_adLoadFlow_RewardedVideo.pause();
+
+				} else {
+
+					System.out.println("Activity_Base_Ads_Banner.preloadRewardedVideo(): current_adLoadFlow_RewardedVideo is null");
 				}
 			}
 		}
@@ -287,6 +297,10 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 				System.out.println("Activity_Base_Ads_Banner.openRewardedVideo(): RESUMED");
 
 				return true;
+
+			} else {
+
+				System.out.println("Activity_Base_Ads_Banner.openRewardedVideo(): current_adLoadFlow_RewardedVideo is null");
 			}
 
 		} catch (Throwable t) {
