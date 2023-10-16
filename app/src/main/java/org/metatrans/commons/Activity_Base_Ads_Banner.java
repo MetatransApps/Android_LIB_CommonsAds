@@ -14,7 +14,13 @@ import android.widget.FrameLayout;
 public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Activity_Base implements IActivityInterstitial, IActivityRewardedVideo {
 
 
-	private static volatile long timestamp_last_interstitial_ad_openning;
+	private static final int INTERSTITIAL_INTERVAL 	= 60 * 1000; //1 minute
+
+	private static final int REWARD_INTERVAL 		= 7 * 60 * 1000; //7 minutes
+
+	private static volatile long timestamp_last_interstitial_ad_opening;
+
+	private static volatile long timestamp_last_rewarded_ad_opening;
 
 
 	private IAdLoadFlow current_adLoadFlow_Banner;
@@ -32,7 +38,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 		super.onCreate(savedInstanceState);
 
 		//Skip ads first 1 minute
-		timestamp_last_interstitial_ad_openning = System.currentTimeMillis();
+		timestamp_last_interstitial_ad_opening = System.currentTimeMillis();
 	}
 
 
@@ -49,16 +55,24 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 		//try-catch ensures no errors, because of ads logic.
 		try {
 
-			attachBanner();
+			if (showAds()) {
+
+				attachBanner();
+			}
 
 			preloadInterstitial();
 
 			preloadRewardedVideo();
 
-		} catch(Throwable t) {
+		} catch (Throwable t) {
 
 			t.printStackTrace();
 		}
+	}
+
+	private boolean showAds() {
+
+		return System.currentTimeMillis() >= timestamp_last_rewarded_ad_opening + REWARD_INTERVAL;
 	}
 
 
@@ -197,6 +211,11 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 		System.out.println("Activity_Base_Ads_Banner.openInterstitial(): called");
 
+		if (!showAds()) {
+
+			System.out.println("Activity_Base_Ads_Banner.openInterstitial(): !showAds()");
+		}
+
 		try {
 
 			if (Application_Base.getInstance().getApp_Me().isPaid()) {
@@ -211,7 +230,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 			long now = System.currentTimeMillis();
 
-			if (now >= timestamp_last_interstitial_ad_openning + 60 * 1000) {
+			if (now >= timestamp_last_interstitial_ad_opening + INTERSTITIAL_INTERVAL) {
 
 				if (current_adLoadFlow_Interstitial != null) {
 
@@ -222,7 +241,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 					success = true;
 				}
 
-				timestamp_last_interstitial_ad_openning = now;
+				timestamp_last_interstitial_ad_opening = now;
 
 			} else {
 
@@ -282,6 +301,11 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 		System.out.println("Activity_Base_Ads_Banner.openRewardedVideo(): called");
 
+		if (!showAds()) {
+
+			System.out.println("Activity_Base_Ads_Banner.openRewardedVideo(): !showAds()");
+		}
+
 		try {
 
 			if (Application_Base.getInstance().getApp_Me().isPaid()) {
@@ -294,6 +318,8 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 			if (current_adLoadFlow_RewardedVideo != null) {
 
 				current_adLoadFlow_RewardedVideo.resume();
+
+				timestamp_last_rewarded_ad_opening = System.currentTimeMillis();
 
 				System.out.println("Activity_Base_Ads_Banner.openRewardedVideo(): RESUMED");
 
