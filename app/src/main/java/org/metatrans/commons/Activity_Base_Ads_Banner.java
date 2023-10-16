@@ -116,6 +116,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 			if (frame == null) {
 
+				//For example: Menu Activity, which opens Reworded Video, have null frame for banner as the activity doesn't have banner at all.
 				//throw new IllegalStateException("Frame is null");
 
 				return;
