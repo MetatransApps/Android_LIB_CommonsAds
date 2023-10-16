@@ -141,6 +141,11 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    protected void showRewardedVideo(Object ad) {
+
+        //Do nothing
+    }
 
     private void request_sync(final View bannerView, final AdLoadFlow_Banner flow) {
 
