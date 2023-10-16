@@ -32,6 +32,13 @@ public class AdsConfiguration_Dummy implements IAdsConfiguration {
 
 
 	@Override
+	public String[] getUnitIDs_RewardedVideo() {
+
+		return new String[] {"FIXED_STRING_getUnitIDs_RewardedVideo"};
+	}
+
+
+	@Override
 	public String getUnitID(String adID) {
 
 		throw new UnsupportedOperationException();

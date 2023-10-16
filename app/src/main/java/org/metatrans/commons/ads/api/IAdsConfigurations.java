@@ -7,5 +7,7 @@ public interface IAdsConfigurations {
 
 	int[] getProvidersOfInterstitials();
 
+	int[] getProvidersOfRewardedVideos();
+
 	IAdsConfiguration getProviderConfiguration(int providerID);
 }

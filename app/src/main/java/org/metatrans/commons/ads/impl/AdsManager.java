@@ -45,12 +45,16 @@ public class AdsManager {
 	private Map<Integer, IAdsContainer> providersContainers;
 	private AdsContainerSequence_Cycle providersContainers_Banners;
 	private AdsContainerSequence_Cycle providersContainers_Interstitials;
+	private AdsContainerSequence_Cycle providersContainers_RewardedVideos;
 	
 	private Map<String, IAdLoadFlow> cachedFlows;
 	
 	private AdsData adsData_banner;
 	private AdsData adsData_interstitial;
-	
+
+	//TODO: Currently we use adsData_interstitial as adsData_rewarded_videos
+	//private AdsData adsData_rewarded_videos;
+
 	private Context context;
 	
 	private IAdsConfigurations adsConfigs;
@@ -90,7 +94,8 @@ public class AdsManager {
 			
 			providersContainers_Banners = new AdsContainerSequence_Cycle();
 			providersContainers_Interstitials = new AdsContainerSequence_Cycle();
-			
+			providersContainers_RewardedVideos = new AdsContainerSequence_Cycle();
+
 			cachedFlows = new HashMap<String, IAdLoadFlow>();
 			
 			providersContainers = new HashMap<Integer, IAdsContainer>();
@@ -190,11 +195,66 @@ public class AdsManager {
 					providersContainers.put(providerID, adsContainer);					
 				}
 				providersContainers_Interstitials.addContainer(adsContainer);
-				
+
 				duplicationTest.put(providerID, adsContainer);
-			}		
-			
-			
+			}
+
+
+			duplicationTest.clear();
+
+			int[] providers_rewarded_videos = adsConfigs.getProvidersOfRewardedVideos();
+			for (int i=0; i<providers_rewarded_videos.length; i++) {
+
+				int providerID = providers_rewarded_videos[i];
+				if (duplicationTest.containsKey(providerID)) {
+					throw new IllegalStateException("Duplicated interstitial provider: " + providerID);
+				}
+
+				IAdsContainer adsContainer = null;
+
+				if (providersContainers.containsKey(providerID)) {
+
+					adsContainer = providersContainers.get(providerID);
+
+				} else {
+
+
+					IAdsConfiguration config = adsConfigs.getProviderConfiguration(providerID);
+
+					String container_class = config.getContainerClass();
+
+					try {
+
+						adsContainer = (IAdsContainer) createObjectByClassName_Constructor1(
+								container_class,
+								context
+						);
+
+					} catch (NoSuchMethodException e) {
+
+						adsContainer = (IAdsContainer) createObjectByClassName_Constructor2(
+								container_class,
+								context,
+								config
+						);
+					}
+
+
+					adsContainer.onCreate_Container(context);
+
+					if (providerID != adsContainer.getProviderID()) {
+						throw new IllegalStateException("Ads: providerID=" + providerID + ", adsContainer.getProviderID()=" + adsContainer.getProviderID());
+					}
+
+					providersContainers.put(providerID, adsContainer);
+				}
+
+				providersContainers_RewardedVideos.addContainer(adsContainer);
+
+				duplicationTest.put(providerID, adsContainer);
+			}
+
+
 			Object[] adsDataArr = AdStorageUtils.readStorage(context);
 			
 			adsData_banner = (AdsData) adsDataArr[0];
@@ -486,8 +546,35 @@ public class AdsManager {
 		
 		return createFlow_Interstitial(adID, new AdsContainerSequence_Cycle(adsContainers));
 	}
-	
-	
+
+
+	public IAdLoadFlow createFlow_RewardedVideo_Mixed(String adID) {
+
+		return createFlow_RewardedVideo_Rating(adID);
+	}
+
+
+	private IAdLoadFlow createFlow_RewardedVideo_Rating(String adID) {
+
+		List<IAdsContainer> adsContainers = new ArrayList<IAdsContainer>();
+
+		adsContainers.addAll(providersContainers_RewardedVideos.getAdsContainers());
+
+		//TODO: Currently we use the same statistics for the RewardedVideo, as for the Interstitial.
+		Collections.sort(adsContainers, new Comparator_Impressions(adsData_interstitial));
+
+		//Print statistics
+		for (int i = 0; i < adsContainers.size(); i++) {
+			IAdsContainer cur_container = adsContainers.get(i);
+			AdData ads_stats = adsData_interstitial.getAdData(cur_container.getProviderID());
+			System.out.println("AdData: ProviderID=" + cur_container.getProviderID() + ", Impressions=" + ads_stats.getImpressions() + ", CTR=" + ads_stats.getCTR());
+		}
+
+		System.out.println("ADS ORDER (Interstitial)" + adsContainers);
+
+		return createFlow_Interstitial(adID, new AdsContainerSequence_Cycle(adsContainers));
+	}
+
 	/*private IAdLoadFlow createFlow_Interstitial(int adsProviderID,  String adID) {
 		return createFlow_Interstitial(adID, new AdsContainerSequence_PermanentSingleton(providersContainers.get(adsProviderID)));
 	}*/

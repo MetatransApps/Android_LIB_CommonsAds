@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 
-public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Activity_Base implements IActivityInterstitial {
+public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Activity_Base implements IActivityInterstitial, IActivityRewardedVideo {
 
 
 	private static volatile long timestamp_last_interstitial_ad_openning;
@@ -20,6 +20,8 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 	private IAdLoadFlow current_adLoadFlow_Banner;
 
 	private IAdLoadFlow current_adLoadFlow_Interstitial;
+
+	private IAdLoadFlow current_adLoadFlow_RewardedVideo;
 
 	private boolean isBannerAttached;
 
@@ -50,6 +52,8 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 			attachBanner();
 
 			preloadInterstitial();
+
+			preloadRewardedVideo();
 
 		} catch(Throwable t) {
 
@@ -87,6 +91,9 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 		return null;
 	}
 
+	protected String getRewardedVideoName() {
+		return null;
+	}
 
 	protected abstract FrameLayout getFrame();
 	
@@ -161,14 +168,14 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 			if (current_adLoadFlow_Interstitial == null) {
 
-				System.out.println("Activity_Question create Interstitial");
+				System.out.println("Activity_Base_Ads_Banner.preloadInterstitial(): create Interstitial");
 
 				current_adLoadFlow_Interstitial = ((Application_Base_Ads)getApplication()).getAdsManager().createFlow_Interstitial_Mixed(getInterstitialName());
 				((Application_Base_Ads)getApplication()).getAdsManager().putCachedFlow(getInterstitialName(), current_adLoadFlow_Interstitial);
 
 			} else {
 
-				System.out.println("Activity_Question Interstitial EXISTS");
+				System.out.println("Activity_Base_Ads_Banner.preloadInterstitial(): Interstitial EXISTS");
 
 				if (current_adLoadFlow_Interstitial.isActive()) {
 
@@ -226,5 +233,67 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 			return false;
 		}
+	}
+
+
+	private void preloadRewardedVideo() {
+
+
+		if (getRewardedVideoName() != null) {
+
+
+			current_adLoadFlow_RewardedVideo = ((Application_Base_Ads)getApplication()).getAdsManager().getCachedFlow(getRewardedVideoName());
+
+
+			if (current_adLoadFlow_RewardedVideo == null) {
+
+				System.out.println("Activity_Base_Ads_Banner.preloadRewardedVideo(): create RewardedVideo");
+
+				current_adLoadFlow_RewardedVideo = ((Application_Base_Ads)getApplication()).getAdsManager().createFlow_RewardedVideo_Mixed(getRewardedVideoName());
+				((Application_Base_Ads)getApplication()).getAdsManager().putCachedFlow(getRewardedVideoName(), current_adLoadFlow_RewardedVideo);
+
+			} else {
+
+				System.out.println("Activity_Base_Ads_Banner.preloadRewardedVideo(): RewardedVideo EXISTS");
+
+				if (current_adLoadFlow_RewardedVideo.isActive()) {
+
+					//current_adLoadFlow_RewardedVideo.cleanCurrent();
+					current_adLoadFlow_RewardedVideo.pause();
+				}
+			}
+		}
+	}
+
+
+	@Override
+	public boolean openRewardedVideo() {
+
+		System.out.println("Activity_Base_Ads_Banner.openRewardedVideo(): called");
+
+		try {
+
+			if (Application_Base.getInstance().getApp_Me().isPaid()) {
+
+				System.out.println("Activity_Base_Ads_Banner.openRewardedVideo(): the app is paid - skipping");
+
+				return false;
+			}
+
+			if (current_adLoadFlow_RewardedVideo != null) {
+
+				current_adLoadFlow_RewardedVideo.resume();
+
+				System.out.println("Activity_Base_Ads_Banner.openRewardedVideo(): RESUMED");
+
+				return true;
+			}
+
+		} catch (Throwable t) {
+
+			t.printStackTrace();
+		}
+
+		return false;
 	}
 }
