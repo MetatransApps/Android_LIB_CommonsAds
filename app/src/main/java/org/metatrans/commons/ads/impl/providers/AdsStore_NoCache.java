@@ -118,4 +118,46 @@ public class AdsStore_NoCache {
 		ads.put(flow.getAdID(), interstitialAd);
 		*/
 	}
+
+	Object getRewardedVideo(AdLoadFlow_Interstitial flow) {
+
+		/*if (ads.containsKey(flow.getAdID())) {
+			throw new IllegalStateException("adID=" + flow.getAdID() + " already exists.");
+		}*/
+
+		//Created at first call only and than cached
+		Object rewardedAd = ads.get(flow.getAdID());
+		if (rewardedAd == null) {
+			rewardedAd = adsContainer.createRewardedVideo(flow);
+			ads.put(flow.getAdID(), rewardedAd);
+		}
+
+		System.out.println("AdsStore_NoCache: getRewardedVideo " + flow.getAdID() + " = " + rewardedAd);
+
+		return rewardedAd;
+	}
+
+
+	void returnRewardedVideo(String adID, AdLoadFlow_Interstitial flow) {
+
+		System.out.println("AdsStore_NoCache: returnRewardedVideo " + adID);
+
+		Object rewardedAd = ads.remove(adID);
+
+		if (rewardedAd != null) {
+
+			System.out.println("AdsStore_NoCache: returned OBJ = " + rewardedAd);
+
+			adsContainer.destroyInterstitial(rewardedAd);
+		}
+
+		//Re-create the ad in order to load it upfront and now wait when it is necessary to show.
+		//!!! This should be already done in the Activity_Base_Ads_Banner.onResume(...)
+		/*interstitialAd = adsContainer.createInterstitial(flow);
+
+		System.out.println("AdsStore_NoCache.returnInterstitial(...): Pre-load Interstitial, interstitialAd=" + interstitialAd);
+
+		ads.put(flow.getAdID(), interstitialAd);
+		*/
+	}
 }

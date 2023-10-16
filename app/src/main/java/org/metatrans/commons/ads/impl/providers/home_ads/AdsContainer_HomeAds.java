@@ -29,8 +29,15 @@ public class AdsContainer_HomeAds extends AdsContainer_HomeAds_BaseImpl {
 	public int getProviderID() {
 		return IAdsProviders.ID_HOME_ADS;
 	}
-	
-	
+
+
+	@Override
+	public void requestConsentInfoUpdate(Activity activity) {
+
+		//Do nothing
+	}
+
+
 	@Override
 	protected boolean canWorkOffline() {
 		return true;

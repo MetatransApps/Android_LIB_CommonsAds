@@ -59,6 +59,13 @@ public class AdsContainer_HomeAds_Composite extends AdsContainer_HomeAds_BaseImp
 
 
 	@Override
+	public void requestConsentInfoUpdate(Activity activity) {
+
+		//Do nothing
+	}
+
+
+	@Override
 	protected AdsContainer_HomeAds_BaseImpl getCurrentHomeAdsSubContainer() {
 		return containers.get(currentContainer_index);
 	}

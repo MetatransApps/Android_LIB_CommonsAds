@@ -63,13 +63,25 @@ public abstract class AdsContainer_Base implements IAdsContainer {
 	
 	
 	protected abstract Object createInterstitial(AdLoadFlow_Interstitial flow);
+
+
+	protected Object createRewardedVideo(AdLoadFlow_Interstitial flow) {
+
+		throw new UnsupportedOperationException();
+	}
+
 	protected abstract Object createInterstitialListener(AdLoadFlow_Interstitial flow, Object interstitial);
 	protected abstract void destroyInterstitial(Object ad);
 	protected abstract void showInterstitial(Object ad);
 	protected void showInterstitial(Object ad, AdLoadFlow_Interstitial flow) {
 		showInterstitial(ad);
 	}
-	
+
+	protected abstract void showRewardedVideo(Object ad);
+
+	protected void showRewardedVideo(Object ad, AdLoadFlow_Interstitial flow) {
+		showRewardedVideo(ad);
+	}
 	
 	protected String[] getKeywords() {
 		return Application_Base.getInstance().getKeywords();
@@ -97,8 +109,8 @@ public abstract class AdsContainer_Base implements IAdsContainer {
 		}
 		return result;
 	}
-	
-	
+
+
 	protected Activity getActivity() {
 		
 		//if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) { //API 10 = SDK < 3.0
@@ -114,8 +126,56 @@ public abstract class AdsContainer_Base implements IAdsContainer {
 		
 		//return activity;
 	}
-	
-	
+
+
+	public void detach(AdLoadFlow_Banner flow) {
+		adsStore_Cache.returnBanner(flow.getAdID());
+	}
+
+
+	public void attach(final AdLoadFlow_Banner flow) {
+
+		if (!DeviceUtils.isConnectedOrConnecting()) {
+
+			if (!canWorkOffline()) {
+
+				flow.loadFailed();
+
+				System.out.println("AdsContainer_Base.attach(flow) : This container " + this + " cannot work offline. Continue with next. Current flow is " + flow);
+
+				return;
+			}
+		}
+
+		View banner = adsStore_Cache.getBanner(flow);
+
+		if (attachBanner_Initially()) {
+			//This is workaround for admob_gps banners - if attached before first load, the banner is sometimes invisible.
+			flow.getFrame().addView(banner);
+		}
+
+		final View adview = banner.findViewById(BannerUtils.AD_BANNER_VIEW_ID);
+
+		AdsManager.getSingleton().getUiHandler().post(new Runnable() {
+
+			@Override
+			public void run() {
+
+				try {
+
+					request_sync_banner(adview, flow);
+
+				} catch(Exception e) {
+
+					e.printStackTrace();
+
+					flow.loadFailed();
+				}
+			}
+		});
+	}
+
+
 	public void initInterstitial(AdLoadFlow_Interstitial flow) {
 		
 		System.out.println("AdsContainer_Base.initInterstitial(flow) : called");
@@ -178,57 +238,78 @@ public abstract class AdsContainer_Base implements IAdsContainer {
 			}
 		});
 	}
-	
-	
+
+
 	public void removeInterstitial(String adID, AdLoadFlow_Interstitial flow) {
 		adsStore_Cache.returnInterstitial(adID, flow);
 	}
-	
-	
-	public void detach(AdLoadFlow_Banner flow) {
-		adsStore_Cache.returnBanner(flow.getAdID());
-	}
-	
-	
-	public void attach(final AdLoadFlow_Banner flow) {
-		
+
+
+	public void initRewardedVideo(AdLoadFlow_Interstitial flow) {
+
+		System.out.println("AdsContainer_Base.initRewardedVideo(flow) : called");
+
 		if (!DeviceUtils.isConnectedOrConnecting()) {
-			
+
 			if (!canWorkOffline()) {
-				
+
+				System.out.println("AdsContainer_Base.initRewardedVideo(flow) : This container " + this + " cannot work offline. Continue with next. Current flow is " + flow);
+
 				flow.loadFailed();
-				
-				System.out.println("AdsContainer_Base.attach(flow) : This container " + this + " cannot work offline. Continue with next. Current flow is " + flow);
-				
+
 				return;
 			}
 		}
-		
-		View banner = adsStore_Cache.getBanner(flow);
-		
-		if (attachBanner_Initially()) {
-			//This is workaround for admob_gps banners - if attached before first load, the banner is sometimes invisible.
-			flow.getFrame().addView(banner);
+
+		//Create the Ad at the first call
+		final Object result = adsStore_Cache.getRewardedVideo(flow);
+
+		System.out.println("AdsContainer_Base.initRewardedVideo(flow) : This container " + result + " was initialized for the interstitial ads.");
+	}
+
+
+	public void requestRewardedVideo(final AdLoadFlow_Interstitial flow) {
+
+		System.out.println("AdsContainer_Base.requestRewardedVideo(flow) : called");
+
+		if (!DeviceUtils.isConnectedOrConnecting()) {
+
+			if (!canWorkOffline()) {
+
+				System.out.println("AdsContainer_Base.requestRewardedVideo(flow) : This container " + this + " cannot work offline. Continue with next. Current flow is " + flow);
+
+				flow.loadFailed();
+
+				return;
+			}
 		}
-		
-		final View adview = banner.findViewById(BannerUtils.AD_BANNER_VIEW_ID);
-		
+
+		final Object result = adsStore_Cache.getRewardedVideo(flow);
+
+		System.out.println("AdsContainer_Base.requestRewardedVideo(flow) : ad = " + result);
+
 		AdsManager.getSingleton().getUiHandler().post(new Runnable() {
-			
+
 			@Override
 			public void run() {
-				
+
 				try {
-					
-					request_sync_banner(adview, flow);
-					
+
+					showRewardedVideo(result, flow);
+
 				} catch(Exception e) {
 
 					e.printStackTrace();
-					
+
 					flow.loadFailed();
 				}
+
 			}
 		});
+	}
+
+
+	public void removeRewardedVideo(String adID, AdLoadFlow_Interstitial flow) {
+		adsStore_Cache.returnRewardedVideo(adID, flow);
 	}
 }

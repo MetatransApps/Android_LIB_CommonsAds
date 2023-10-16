@@ -6,6 +6,7 @@ import org.metatrans.commons.ads.impl.IAdsContainer;
 import org.metatrans.commons.ads.impl.flow.AdLoadFlow_Banner;
 import org.metatrans.commons.ads.impl.flow.AdLoadFlow_Interstitial;
 
+import android.app.Activity;
 import android.content.Context;
 
 
@@ -28,8 +29,14 @@ public class AdsContainer_Dummy implements IAdsContainer {
 
 		//Do nothing
 	}
-	
-	
+
+	@Override
+	public void requestConsentInfoUpdate(Activity activity) {
+
+		//Do nothing
+	}
+
+
 	@Override
 	public void removeInterstitial(String adID, AdLoadFlow_Interstitial flow) {
 

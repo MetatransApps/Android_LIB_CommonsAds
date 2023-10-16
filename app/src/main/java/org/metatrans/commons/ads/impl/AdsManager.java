@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -25,6 +26,7 @@ import org.metatrans.commons.ads.impl.stat.model.AdData;
 import org.metatrans.commons.ads.impl.stat.model.AdsData;
 import org.metatrans.commons.app.Application_Base_Ads;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
@@ -222,8 +224,19 @@ public class AdsManager {
 
 		System.out.println("AdsManager singleton created!");
 	}
-	
-	
+
+
+	public void requestConsentInfoUpdate(Activity first_activity) {
+
+		Set keys = providersContainers.keySet();
+
+		for (Object key: keys) {
+
+			providersContainers.get(key).requestConsentInfoUpdate(first_activity);
+		}
+	}
+
+
 	public boolean isTestMode() {
 
 		return testMode;
