@@ -20,7 +20,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 	private static volatile long timestamp_last_interstitial_ad_opening;
 
-	private static volatile long timestamp_last_rewarded_ad_opening;
+	public static volatile long timestamp_last_rewarded_ad_opening;
 
 
 	private IAdLoadFlow current_adLoadFlow_Banner;
@@ -318,8 +318,6 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 			if (current_adLoadFlow_RewardedVideo != null) {
 
 				current_adLoadFlow_RewardedVideo.resume();
-
-				timestamp_last_rewarded_ad_opening = System.currentTimeMillis();
 
 				System.out.println("Activity_Base_Ads_Banner.openRewardedVideo(): RESUMED");
 
