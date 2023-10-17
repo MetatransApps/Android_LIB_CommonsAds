@@ -10,6 +10,7 @@ import org.metatrans.commons.ads.impl.AdsManager;
 import org.metatrans.commons.ads.impl.IAdsContainer;
 import org.metatrans.commons.ads.impl.flow.AdLoadFlow_Banner;
 import org.metatrans.commons.ads.impl.flow.AdLoadFlow_Interstitial;
+import org.metatrans.commons.ads.impl.flow.AdLoadFlow_RewardedVideo;
 import org.metatrans.commons.ads.utils.BannerUtils;
 import org.metatrans.commons.app.Application_Base;
 import org.metatrans.commons.app.Application_Base_Ads;
@@ -64,22 +65,20 @@ public abstract class AdsContainer_Base implements IAdsContainer {
 	
 	protected abstract Object createInterstitial(AdLoadFlow_Interstitial flow);
 
-
-	protected Object createRewardedVideo(AdLoadFlow_Interstitial flow) {
-
-		throw new UnsupportedOperationException();
-	}
-
 	protected abstract Object createInterstitialListener(AdLoadFlow_Interstitial flow, Object interstitial);
 	protected abstract void destroyInterstitial(Object ad);
+
 	protected abstract void showInterstitial(Object ad);
+
+	protected abstract Object createRewardedVideo(AdLoadFlow_RewardedVideo flow);
+	protected abstract void destroyRewardedVideo(Object ad);
 	protected void showInterstitial(Object ad, AdLoadFlow_Interstitial flow) {
 		showInterstitial(ad);
 	}
 
 	protected abstract void showRewardedVideo(Object ad);
 
-	protected void showRewardedVideo(Object ad, AdLoadFlow_Interstitial flow) {
+	protected void showRewardedVideo(Object ad, AdLoadFlow_RewardedVideo flow) {
 		showRewardedVideo(ad);
 	}
 	
@@ -128,11 +127,13 @@ public abstract class AdsContainer_Base implements IAdsContainer {
 	}
 
 
+	@Override
 	public void detach(AdLoadFlow_Banner flow) {
 		adsStore_Cache.returnBanner(flow.getAdID());
 	}
 
 
+	@Override
 	public void attach(final AdLoadFlow_Banner flow) {
 
 		if (!DeviceUtils.isConnectedOrConnecting()) {
@@ -176,6 +177,7 @@ public abstract class AdsContainer_Base implements IAdsContainer {
 	}
 
 
+	@Override
 	public void initInterstitial(AdLoadFlow_Interstitial flow) {
 		
 		System.out.println("AdsContainer_Base.initInterstitial(flow) : called");
@@ -197,8 +199,9 @@ public abstract class AdsContainer_Base implements IAdsContainer {
 		
 		System.out.println("AdsContainer_Base.initInterstitial(flow) : This container " + result + " was initialized for the interstitial ads.");
 	}
-	
-	
+
+
+	@Override
 	public void requestInterstitial(final AdLoadFlow_Interstitial flow) {
 		
 		System.out.println("AdsContainer_Base.requestInterstitial(flow) : called");
@@ -240,12 +243,14 @@ public abstract class AdsContainer_Base implements IAdsContainer {
 	}
 
 
+	@Override
 	public void removeInterstitial(String adID, AdLoadFlow_Interstitial flow) {
 		adsStore_Cache.returnInterstitial(adID, flow);
 	}
 
 
-	public void initRewardedVideo(AdLoadFlow_Interstitial flow) {
+	@Override
+	public void initRewardedVideo(AdLoadFlow_RewardedVideo flow) {
 
 		System.out.println("AdsContainer_Base.initRewardedVideo(flow) : called");
 
@@ -268,7 +273,8 @@ public abstract class AdsContainer_Base implements IAdsContainer {
 	}
 
 
-	public void requestRewardedVideo(final AdLoadFlow_Interstitial flow) {
+	@Override
+	public void requestRewardedVideo(final AdLoadFlow_RewardedVideo flow) {
 
 		System.out.println("AdsContainer_Base.requestRewardedVideo(flow) : called");
 
@@ -309,7 +315,8 @@ public abstract class AdsContainer_Base implements IAdsContainer {
 	}
 
 
-	public void removeRewardedVideo(String adID, AdLoadFlow_Interstitial flow) {
+	@Override
+	public void removeRewardedVideo(String adID, AdLoadFlow_RewardedVideo flow) {
 		adsStore_Cache.returnRewardedVideo(adID, flow);
 	}
 }

@@ -4,6 +4,7 @@ package org.metatrans.commons;
 import org.metatrans.commons.ads.impl.flow.IAdLoadFlow;
 import org.metatrans.commons.app.Application_Base;
 import org.metatrans.commons.app.Application_Base_Ads;
+import org.metatrans.commons.ui.Toast_Base;
 
 import android.os.Bundle;
 import android.view.Gravity;
@@ -14,13 +15,18 @@ import android.widget.FrameLayout;
 public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Activity_Base implements IActivityInterstitial, IActivityRewardedVideo {
 
 
-	private static final int INTERSTITIAL_INTERVAL 	= 60 * 1000; //1 minute
+	private static final int INTERSTITIAL_INTERVAL 			= 60 * 1000; //1 minute
 
-	private static final int REWARD_INTERVAL 		= 7 * 60 * 1000; //7 minutes
+	private static final int REWARD_INTERVAL 				= 7 * 60 * 1000; //7 minutes
+
+	private static final int WAITING_TIME_FOR_REWARDED_AD 	= (int) (3.5 * 1000); //3.5 seconds
 
 	private static volatile long timestamp_last_interstitial_ad_opening;
 
 	public static volatile long timestamp_last_rewarded_ad_opening;
+
+	//Used for waiting some time to load the Rewarded Video, because if it is clicked too fast, it doesn't opened.
+	private static volatile long timestamp_last_resumed;
 
 
 	private IAdLoadFlow current_adLoadFlow_Banner;
@@ -68,6 +74,8 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 			t.printStackTrace();
 		}
+
+		timestamp_last_resumed = System.currentTimeMillis();
 	}
 
 	private boolean showAds() {
@@ -214,6 +222,8 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 		if (!showAds()) {
 
 			System.out.println("Activity_Base_Ads_Banner.openInterstitial(): !showAds()");
+
+			return false;
 		}
 
 		try {
@@ -301,16 +311,28 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 		System.out.println("Activity_Base_Ads_Banner.openRewardedVideo(): called");
 
-		if (!showAds()) {
+		//If the user wants to explicitly reset the time for No ads, it must be possible.
+		/*if (!showAds()) {
 
 			System.out.println("Activity_Base_Ads_Banner.openRewardedVideo(): !showAds()");
-		}
+
+			return false;
+		}*/
 
 		try {
 
-			if (Application_Base.getInstance().getApp_Me().isPaid()) {
+			//It is currently called only when the user clicks button intentionally.
+			/*if (Application_Base.getInstance().getApp_Me().isPaid()) {
 
 				System.out.println("Activity_Base_Ads_Banner.openRewardedVideo(): the app is paid - skipping");
+
+				return false;
+			}*/
+
+			long waiting_time = System.currentTimeMillis() - (timestamp_last_resumed + WAITING_TIME_FOR_REWARDED_AD);
+			if (waiting_time < 0) {
+
+				Toast_Base.showToast_InCenter_Short(this, (-waiting_time) + " ms");
 
 				return false;
 			}

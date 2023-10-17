@@ -17,6 +17,7 @@ import org.metatrans.commons.ads.api.IAdsConfigurations;
 import org.metatrans.commons.ads.api.IAdsProviders;
 import org.metatrans.commons.ads.impl.flow.AdLoadFlow_Banner;
 import org.metatrans.commons.ads.impl.flow.AdLoadFlow_Interstitial;
+import org.metatrans.commons.ads.impl.flow.AdLoadFlow_RewardedVideo;
 import org.metatrans.commons.ads.impl.flow.IAdLoadFlow;
 import org.metatrans.commons.ads.impl.sequence.AdsContainerSequence_Cycle;
 import org.metatrans.commons.ads.impl.sequence.AdsContainerSequence_PermanentSingleton;
@@ -572,14 +573,37 @@ public class AdsManager {
 
 		System.out.println("ADS ORDER (Interstitial)" + adsContainers);
 
-		return createFlow_Interstitial(adID, new AdsContainerSequence_Cycle(adsContainers));
+		return createFlow_RewardedVideo(adID, new AdsContainerSequence_Cycle(adsContainers));
 	}
 
 	/*private IAdLoadFlow createFlow_Interstitial(int adsProviderID,  String adID) {
 		return createFlow_Interstitial(adID, new AdsContainerSequence_PermanentSingleton(providersContainers.get(adsProviderID)));
 	}*/
-	
-	
+
+
+	private IAdLoadFlow createFlow_RewardedVideo(String adID, IAdsContainerSequence containers_sequance) {
+
+		AdLoadFlow_RewardedVideo flow = new AdLoadFlow_RewardedVideo(adID, containers_sequance, adsData_interstitial, uiHandler, executor);
+
+		List<IAdsContainer> containers = containers_sequance.getAdsContainers();
+
+		for (IAdsContainer container: containers) {
+
+			try {
+
+				container.initRewardedVideo(flow);
+
+			} catch (Throwable t) {
+
+				//Print the error and continue with what we have as successfully initialized containers
+				t.printStackTrace();
+			}
+		}
+
+		return flow;
+	}
+
+
 	private IAdLoadFlow createFlow_Interstitial(String adID, IAdsContainerSequence containers_sequance) {
 		
 		AdLoadFlow_Interstitial flow = new AdLoadFlow_Interstitial(adID, containers_sequance, adsData_interstitial, uiHandler, executor);

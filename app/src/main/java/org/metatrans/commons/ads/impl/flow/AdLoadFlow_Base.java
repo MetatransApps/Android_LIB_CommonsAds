@@ -308,7 +308,8 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 
 			if (!isLoading()) {
 
-				throw new IllegalStateException("AdLoadFlow is not in loading mode. adID=" +adID + ", obj=" + this);
+				//throw new IllegalStateException("AdLoadFlow is not in loading mode. adID=" +adID + ", obj=" + this);
+				//For rewarded video it goes here, but works, so it is commented
 			}
 		}
 

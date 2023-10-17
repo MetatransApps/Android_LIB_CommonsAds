@@ -10,6 +10,7 @@ import org.metatrans.commons.DeviceUtils;
 import org.metatrans.commons.ads.api.IAdsConfiguration;
 import org.metatrans.commons.ads.impl.flow.AdLoadFlow_Banner;
 import org.metatrans.commons.ads.impl.flow.AdLoadFlow_Interstitial;
+import org.metatrans.commons.ads.impl.flow.AdLoadFlow_RewardedVideo;
 import org.metatrans.commons.ads.impl.providers.AdsContainer_Base;
 import org.metatrans.commons.ads.utils.BannerUtils;
 import org.metatrans.commons.app.Application_Base;
@@ -115,6 +116,22 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
     @Override
     protected void destroyInterstitial(Object ad) {
         //Do nothing
+    }
+
+
+    @Override
+    protected Object createRewardedVideo(AdLoadFlow_RewardedVideo flow) {
+
+        System.out.println("AdsContainer_HomeAds: createRewardedVideo called");
+
+        Object dummy = new Object();
+        return dummy;
+    }
+
+
+    @Override
+    protected void destroyRewardedVideo(Object ad) {
+
     }
 
 

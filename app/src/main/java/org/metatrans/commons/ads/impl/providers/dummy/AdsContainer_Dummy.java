@@ -5,6 +5,7 @@ import org.metatrans.commons.ads.api.IAdsProviders;
 import org.metatrans.commons.ads.impl.IAdsContainer;
 import org.metatrans.commons.ads.impl.flow.AdLoadFlow_Banner;
 import org.metatrans.commons.ads.impl.flow.AdLoadFlow_Interstitial;
+import org.metatrans.commons.ads.impl.flow.AdLoadFlow_RewardedVideo;
 
 import android.app.Activity;
 import android.content.Context;
@@ -42,8 +43,26 @@ public class AdsContainer_Dummy implements IAdsContainer {
 
 		//Do nothing
 	}
-	
-	
+
+	@Override
+	public void initRewardedVideo(AdLoadFlow_RewardedVideo flow) {
+
+		//Do nothing
+	}
+
+	@Override
+	public void requestRewardedVideo(AdLoadFlow_RewardedVideo flow) {
+
+		//Do nothing
+	}
+
+	@Override
+	public void removeRewardedVideo(String adID, AdLoadFlow_RewardedVideo flow) {
+
+		//Do nothing
+	}
+
+
 	@Override
 	public void attach(AdLoadFlow_Banner flow) {
 
