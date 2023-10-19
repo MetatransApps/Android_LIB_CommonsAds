@@ -6,12 +6,26 @@ import android.widget.FrameLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.metatrans.commons.ads.api.IAdsConfiguration;
+import org.metatrans.commons.app.Application_Base;
 import org.metatrans.commons.cfg.IConfigurationEntry;
 import org.metatrans.commons.cfg.menu.ConfigurationUtils_Base_MenuMain;
 import org.metatrans.commons.cfg.menu.IConfigurationMenu_Main;
 
 
 public class Activity_Menu_Main_Base extends Activity_Menu_Base {
+
+
+	@Override
+	protected String getRewardedVideoName() {
+
+		if (Application_Base.getInstance().getApp_Me().isPaid()) {
+
+			return null;
+		}
+
+		return IAdsConfiguration.AD_ID_REWARDED_VIDEO1;
+	}
 
 
 	@Override
