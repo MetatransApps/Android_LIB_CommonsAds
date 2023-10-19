@@ -103,6 +103,7 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
         System.out.println("AdsContainer_HomeAds: createInterstitial called");
 
         Object dummy = new Object();
+
         return dummy;
     }
 
@@ -124,7 +125,10 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
 
         System.out.println("AdsContainer_HomeAds: createRewardedVideo called");
 
+        flow.loadOK();
+
         Object dummy = new Object();
+
         return dummy;
     }
 
