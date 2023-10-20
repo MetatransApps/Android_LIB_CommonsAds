@@ -125,8 +125,6 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
 
         System.out.println("AdsContainer_HomeAds: createRewardedVideo called");
 
-        flow.loadOK();
-
         Object dummy = new Object();
 
         return dummy;
@@ -135,6 +133,8 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
 
     @Override
     protected void destroyRewardedVideo(Object ad) {
+
+        System.out.println("AdsContainer_HomeAds: destroyRewardedVideo called");
 
     }
 
@@ -162,11 +162,22 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
         throw new UnsupportedOperationException();
     }
 
+
+    @Override
+    protected void showRewardedVideo(Object ad, AdLoadFlow_RewardedVideo flow) {
+
+        System.out.println("AdsContainer_HomeAds: showRewardedVideo called");
+
+        flow.loadOK();
+    }
+
+
     @Override
     protected void showRewardedVideo(Object ad) {
 
-        //Do nothing
+        throw new UnsupportedOperationException();
     }
+
 
     private void request_sync(final View bannerView, final AdLoadFlow_Banner flow) {
 
