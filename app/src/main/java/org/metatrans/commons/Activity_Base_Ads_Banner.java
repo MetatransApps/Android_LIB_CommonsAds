@@ -23,7 +23,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 	private static final int WAITING_TIME_FOR_REWARDED_AD 	= (int) (3.5 * 1000); //3.5 seconds
 
-	private static volatile long timestamp_last_interstitial_ad_opening;
+	private static volatile long timestamp_last_interstitial_ad_opening = System.currentTimeMillis() + INTERSTITIAL_INTERVAL;
 
 	public static volatile long timestamp_last_rewarded_ad_opening;
 
@@ -45,8 +45,8 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 		
 		super.onCreate(savedInstanceState);
 
-		//Skip ads first 1 minute
-		timestamp_last_interstitial_ad_opening = System.currentTimeMillis();
+		//Must be initialized statically, because otherwise if initialized on each create, it doesn't show ads in many cases.
+		//timestamp_last_interstitial_ad_opening = System.currentTimeMillis();
 	}
 
 
@@ -237,6 +237,8 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 				return false;
 			}
 
+
+			System.out.println("Activity_Base_Ads_Banner.openInterstitial(): INTERSTITIAL_INTERVAL=" + INTERSTITIAL_INTERVAL);
 
 			boolean success = false;
 

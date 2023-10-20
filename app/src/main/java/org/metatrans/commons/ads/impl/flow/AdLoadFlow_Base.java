@@ -255,6 +255,8 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 
 					current_retry_job = new Retry();
 
+					System.out.println("AdLoadFlow_Base: scheduling wait finished NEW current_retry_job = " + current_retry_job);
+
 					getUiHandler().post(current_retry_job);
 				}
 			}
