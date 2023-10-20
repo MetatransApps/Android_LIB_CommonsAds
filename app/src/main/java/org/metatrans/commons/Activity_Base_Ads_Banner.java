@@ -17,9 +17,10 @@ import android.widget.FrameLayout;
 public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Activity_Base implements IActivityInterstitial, IActivityRewardedVideo {
 
 
-	private static final int INTERSTITIAL_INTERVAL 			= DEBUG ? 5 * 1000 : 60 * 1000; //1 minute if productive
+	//1 minute if productive mode and smaller for testing
+	private static final int INTERSTITIAL_INTERVAL 			= (DEBUG ? (5 * 1000) : (60 * 1000));
 
-	private static final int REWARD_INTERVAL 				= 7 * 60 * 1000; //7 minutes
+	private static final int REWARD_INTERVAL 				= 7 * INTERSTITIAL_INTERVAL;
 
 	private static final int WAITING_TIME_FOR_REWARDED_AD 	= (int) (3.5 * 1000); //3.5 seconds
 
@@ -161,9 +162,16 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 			if (current_adLoadFlow_Banner != null) {
 
-				System.out.println("Activity_Base_Ads_Banner: attachBanner() - resume add");
+				if (!current_adLoadFlow_Banner.isActive()) {
 
-				current_adLoadFlow_Banner.resume();
+					System.out.println("Activity_Base_Ads_Banner: attachBanner(): resume add");
+
+					current_adLoadFlow_Banner.resume();
+
+				} else {
+
+					System.out.println("Activity_Base_Ads_Banner: attachBanner(): skipping, because Banner is ALREADY active");
+				}
 
 				isBannerAttached = true;
 			}
@@ -175,7 +183,10 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 		if (current_adLoadFlow_Banner != null) {
 
-			current_adLoadFlow_Banner.pause();
+			if (current_adLoadFlow_Banner.isActive()) {
+
+				current_adLoadFlow_Banner.pause();
+			}
 
 			current_adLoadFlow_Banner = null;
 		}
@@ -208,7 +219,6 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 				if (current_adLoadFlow_Interstitial.isActive()) {
 
-					//current_adLoadFlow_Interstitial.cleanCurrent();
 					current_adLoadFlow_Interstitial.pause();
 				}
 			}
@@ -237,8 +247,12 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 				return false;
 			}
 
-
-			System.out.println("Activity_Base_Ads_Banner.openInterstitial(): INTERSTITIAL_INTERVAL=" + INTERSTITIAL_INTERVAL);
+			System.out.println("Activity_Base_Ads_Banner.openInterstitial(): timestamp_last_interstitial_ad_opening="
+					+ timestamp_last_interstitial_ad_opening);
+			System.out.println("Activity_Base_Ads_Banner.openInterstitial(): readable_time="
+					+ TimeUtils.getReadableDateTime(timestamp_last_interstitial_ad_opening));
+			System.out.println("Activity_Base_Ads_Banner.openInterstitial(): INTERSTITIAL_INTERVAL="
+					+ INTERSTITIAL_INTERVAL);
 
 			boolean success = false;
 
@@ -248,9 +262,16 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 				if (current_adLoadFlow_Interstitial != null) {
 
-					current_adLoadFlow_Interstitial.resume();
+					if (!current_adLoadFlow_Interstitial.isActive()) {
 
-					System.out.println("Activity_Base_Ads_Banner.openInterstitial(): RESUMED");
+						System.out.println("Activity_Base_Ads_Banner.openInterstitial(): RESUMED");
+
+						current_adLoadFlow_Interstitial.resume();
+
+					} else {
+
+						System.out.println("Activity_Base_Ads_Banner: openInterstitial(): skipping, because Interstitial is ALREADY active");
+					}
 
 					success = true;
 				}
@@ -298,7 +319,6 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 				if (current_adLoadFlow_RewardedVideo.isActive()) {
 
-					//current_adLoadFlow_RewardedVideo.cleanCurrent();
 					current_adLoadFlow_RewardedVideo.pause();
 
 				} else {
@@ -343,9 +363,16 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 			if (current_adLoadFlow_RewardedVideo != null) {
 
-				current_adLoadFlow_RewardedVideo.resume();
+				if (!current_adLoadFlow_RewardedVideo.isActive()) {
 
-				System.out.println("Activity_Base_Ads_Banner.openRewardedVideo(): RESUMED");
+					System.out.println("Activity_Base_Ads_Banner.openRewardedVideo(): RESUMED");
+
+					current_adLoadFlow_RewardedVideo.resume();
+
+				} else {
+
+					System.out.println("Activity_Base_Ads_Banner: openRewardedVideo(): skipping, because RewardedVideo is ALREADY active");
+				}
 
 				return true;
 
