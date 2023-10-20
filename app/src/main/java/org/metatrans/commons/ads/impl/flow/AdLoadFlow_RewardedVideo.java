@@ -30,4 +30,13 @@ public class AdLoadFlow_RewardedVideo extends AdLoadFlow_Base {
 		getCurrentContainer().removeRewardedVideo(getAdID(), this);
 		super.cleanCurrent();
 	}
+
+
+	@Override
+	public synchronized void loadOK() {
+
+		super.loadOK();
+
+		pause();
+	}
 }

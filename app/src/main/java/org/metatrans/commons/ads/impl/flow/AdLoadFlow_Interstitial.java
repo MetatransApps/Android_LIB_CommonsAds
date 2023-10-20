@@ -28,8 +28,16 @@ public class AdLoadFlow_Interstitial extends AdLoadFlow_Base {
 	
 	
 	@Override
-	public void cleanCurrent() {
+	protected void cleanCurrent() {
 		getCurrentContainer().removeInterstitial(getAdID(), this);
 		super.cleanCurrent();
+	}
+
+	@Override
+	public synchronized void loadOK() {
+
+		super.loadOK();
+
+		pause();
 	}
 }
