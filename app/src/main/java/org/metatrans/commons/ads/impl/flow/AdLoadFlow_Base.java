@@ -58,9 +58,9 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 		isDetached = false;
 		time_current_container_start = System.currentTimeMillis();
 	}
-	
-	
-	public void cleanCurrent() {
+
+
+	protected void cleanCurrent() {
 		isDetached = true;
 	}
 	
@@ -324,7 +324,13 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 		
 		boolean stoped = false;
 		
-		
+
+		private Retry() {
+
+			//Do nothing
+		}
+
+
 		@Override
 		public void run() {
 			
