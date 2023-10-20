@@ -15,6 +15,8 @@ public class AdLoadFlow_Interstitial extends AdLoadFlow_Base {
 	public AdLoadFlow_Interstitial(String _adID, IAdsContainerSequence _containers_sequance, AdsData _adsData
 			, Handler _uiHandler, ExecutorService _executor) {
 		super(_adID, _containers_sequance, _adsData, _uiHandler, _executor);
+
+		System.out.println("AdLoadFlow_Interstitial.constructor(): _containers_sequance=" + _containers_sequance.getAdsContainers());
 	}
 	
 	

@@ -240,19 +240,19 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 			
 			@Override
 			public void run() {
-				
-				try {
 
-					long wait_time = RETRY_WAIT_TIME * Math.max(1, counter);
+					try {
 
-					System.out.println("AdLoadFlow_Base: scheduling wait time is " + wait_time + ", now waiting ...");
+						long wait_time = RETRY_WAIT_TIME * Math.max(1, counter);
 
-					Thread.sleep(wait_time);
+						System.out.println("AdLoadFlow_Base: scheduling wait time is " + wait_time + ", now waiting ...");
 
-					System.out.println("AdLoadFlow_Base: scheduling wait finished current_retry_job = " + current_retry_job);
-					
-				} catch (InterruptedException e) {}
-				
+						Thread.sleep(wait_time);
+
+						System.out.println("AdLoadFlow_Base: scheduling wait finished current_retry_job = " + current_retry_job);
+
+					} catch (InterruptedException e) {}
+
 					current_retry_job = new Retry();
 
 					getUiHandler().post(current_retry_job);

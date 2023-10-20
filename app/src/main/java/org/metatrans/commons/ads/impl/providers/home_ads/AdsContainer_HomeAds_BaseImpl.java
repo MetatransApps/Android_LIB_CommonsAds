@@ -193,22 +193,24 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
 
     private void request_sync(AdLoadFlow_Interstitial flow) {
 
-        System.out.println("AdsContainer_HomeAds: request_sync for interstitial called");
+        System.out.println("AdsContainer_HomeAds: request_sync for interstitial: called");
 
         int rand = (int) (Math.random() * 100d);
 
         Activity currentActivity = Application_Base.getInstance().getCurrentActivity();
         if (currentActivity == null) {
-            System.out.println("AdsContainer_HomeAds: EXIT because current activity is null");
+            System.out.println("AdsContainer_HomeAds: request_sync for interstitial: EXIT because current activity is null");
             flow.loadFailed();
             return;
         }
 
         final IHomeAdInfo promoted = getNextHomeAdInfo();
 
+        System.out.println("AdsContainer_HomeAds: request_sync for interstitial: promoted=" + promoted);
+
         if (rand <= 50 || promoted == null || !DeviceUtils.isConnected()) {
 
-            System.out.println("AdsContainer_HomeAds: request_sync show APP_LIST");
+            System.out.println("AdsContainer_HomeAds: request_sync for interstitial: show APP_LIST");
 
             Intent intent = createInterstitialIntent(currentActivity);
 

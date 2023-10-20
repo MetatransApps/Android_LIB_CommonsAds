@@ -1,6 +1,8 @@
 package org.metatrans.commons;
 
 
+import static org.metatrans.commons.ads.BuildConfig.DEBUG;
+
 import org.metatrans.commons.ads.impl.flow.IAdLoadFlow;
 import org.metatrans.commons.app.Application_Base;
 import org.metatrans.commons.app.Application_Base_Ads;
@@ -15,7 +17,7 @@ import android.widget.FrameLayout;
 public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Activity_Base implements IActivityInterstitial, IActivityRewardedVideo {
 
 
-	private static final int INTERSTITIAL_INTERVAL 			= 60 * 1000; //1 minute
+	private static final int INTERSTITIAL_INTERVAL 			= DEBUG ? 5 * 1000 : 60 * 1000; //1 minute if productive
 
 	private static final int REWARD_INTERVAL 				= 7 * 60 * 1000; //7 minutes
 
