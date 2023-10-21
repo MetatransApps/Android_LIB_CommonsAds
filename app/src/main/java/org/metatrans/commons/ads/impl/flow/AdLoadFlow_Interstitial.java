@@ -27,8 +27,6 @@ public class AdLoadFlow_Interstitial extends AdLoadFlow_Base {
 
 		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Interstitial.retry(): called");
 
-		//super.nextContainer();
-
 		super.retry();
 
 		getCurrentContainer().requestInterstitial(this);
