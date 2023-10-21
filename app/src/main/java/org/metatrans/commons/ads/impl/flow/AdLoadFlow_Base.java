@@ -3,6 +3,7 @@ package org.metatrans.commons.ads.impl.flow;
 
 import java.util.concurrent.ExecutorService;
 
+import org.metatrans.commons.DebugTags;
 import org.metatrans.commons.DeviceUtils;
 import org.metatrans.commons.ads.impl.AdsManager;
 import org.metatrans.commons.ads.impl.IAdsContainer;
@@ -41,7 +42,9 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 	
 	
 	public AdLoadFlow_Base(String _adID, IAdsContainerSequence _containers_sequance, AdsData _adsData, Handler _uiHandler, ExecutorService _executor) {
-		
+
+		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: constructor(): called");
+
 		adID = _adID;
 		containers_sequance = _containers_sequance;
 		adsData = _adsData;
@@ -55,12 +58,18 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 	
 	
 	protected void retry() {
+
+		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: retry(): called");
+
 		isDetached = false;
 		time_current_container_start = System.currentTimeMillis();
 	}
 
 
 	protected void cleanCurrent() {
+
+		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: cleanCurrent(): called");
+
 		isDetached = true;
 	}
 	
@@ -77,10 +86,12 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 
 	
 	protected void nextContainer() {
-		
+
+		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: nextContainer(): called.");
+
 		current_container = containers_sequance.next();
-		
-		System.out.println("AdLoadFlow_Base: nextContainer=" + current_container);
+
+		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: next_container=" + current_container);
 	}
 	
 
@@ -111,23 +122,23 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 	public synchronized void resume() {
 		
 		long mem_mb = DeviceUtils.getAvailableMemory_InMB();
-		System.out.println("AdLoadFlow_Base: AD FLOW: resume - " + getAdID() + " available memory is " + mem_mb + " MB");
+		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: AD FLOW: resume - " + getAdID() + " available memory is " + mem_mb + " MB");
 
 		if (mem_mb <= 3) { //3 MB for buffer should be enough for 1 ad)
 
-			System.out.println("AD FLOW: resume - SKIPPED, because available memory is " + mem_mb + " MB");
+			System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: AD FLOW: resume - SKIPPED, because available memory is " + mem_mb + " MB");
 			return;
 		}
 		
 		if(isLoading()) {
 			//Do nothing
-			System.out.println("AdLoadFlow_Base: AdLoadFlow is already in loading mode. adID=" + getAdID() + ", obj=" + this);
+			System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: AdLoadFlow is already in loading mode. adID=" + getAdID() + ", obj=" + this);
 
 		} else {
 			
 			if (!isDetached) {
 
-				System.out.println("AdLoadFlow_Base : AdLoadFlow is attached but resume is called. adID=" + getAdID() + ", obj=" + this);
+				System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base : AdLoadFlow is attached but resume is called. adID=" + getAdID() + ", obj=" + this);
 
 				if (!isActive()) {
 
@@ -148,14 +159,14 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 			}
 		}
 		
-		System.out.println("AdLoadFlow_Base: AD FLOW: resume - OK");
+		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: AD FLOW: resume - OK");
 	}
 	
 	
 	@Override
 	public synchronized void pause() {
 		
-		System.out.println("AdLoadFlow_Base: AD FLOW: " + "pause " + getAdID() + ", isDetached=" + isDetached);
+		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: AD FLOW: " + "pause " + getAdID() + ", isDetached=" + isDetached);
 		
 		counter = 0;
 		
@@ -180,13 +191,16 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 	
 	
 	private void asyncRetry() {
-		
+
+		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: asyncRetry: called");
+
 		if (current_retry_job != null) {
-			//TODO: throw new IllegalStateException();
+
+			System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: asyncRetry: EXIT because current_retry_job is NOT null");
+
+			//if (true) throw new IllegalStateException();
+
 			//No retry
-			
-			System.out.println("AdLoadFlow_Base: asyncRetry: EXIT because current_retry_job is NOT null");
-			
 			return;
 		}
 		
@@ -204,7 +218,9 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 	
 	
 	public synchronized void loadOK() {
-		
+
+		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: loadOK: called");
+
 		stopLoading();
 		
 		AdData adData = adsData.getAdData(getCurrentContainer().getProviderID());
@@ -213,7 +229,9 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 	
 	
 	public synchronized void loadFailed() {
-		
+
+		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: loadFailed: called");
+
 		cleanCurrent();
 		
 		AdData adData = adsData.getAdData(getCurrentContainer().getProviderID());
@@ -228,13 +246,13 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 			
 			if (!isActive()) {
 
-				System.out.println("AdLoadFlow_Base: loadFailed for container " + getCurrentContainer() + " - exit because the flow is not active");
+				System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: loadFailed: for container " + getCurrentContainer() + " - exit because the flow is not active");
 
 				return;
 			}
 		}
 		
-		System.out.println("AdLoadFlow_Base: loadFailed for container " + getCurrentContainer() + " - schedule next container.");
+		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: loadFailed: for container " + getCurrentContainer() + " - schedule next container.");
 		
 		getExecutor().submit(new Runnable() {
 			
@@ -245,17 +263,17 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 
 						long wait_time = RETRY_WAIT_TIME * Math.max(1, counter);
 
-						System.out.println("AdLoadFlow_Base: scheduling wait time is " + wait_time + ", now waiting ...");
+						System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: scheduling: wait time is " + wait_time + ", now waiting ...");
 
 						Thread.sleep(wait_time);
 
-						System.out.println("AdLoadFlow_Base: scheduling wait finished current_retry_job = " + current_retry_job);
+						System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: scheduling: wait finished current_retry_job = " + current_retry_job);
 
 					} catch (InterruptedException e) {}
 
 					current_retry_job = new Retry();
 
-					System.out.println("AdLoadFlow_Base: scheduling wait finished NEW current_retry_job = " + current_retry_job);
+					System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: scheduling: wait finished NEW current_retry_job = " + current_retry_job);
 
 					getUiHandler().post(current_retry_job);
 				}
@@ -265,6 +283,9 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 	
 	
 	public synchronized void clicked() {
+
+		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: clicked: called.");
+
 		//System.out.println("OPA1");
 		AdData adData = adsData.getAdData(getCurrentContainer().getProviderID());
 		//System.out.println("OPA2");
@@ -276,7 +297,8 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 	
 	protected synchronized void nextRetry() {
 		
-		System.out.println("AdLoadFlow_Base: RETRY " + (counter + 1) + ", adID=" + getAdID() + ", obj=" + this);
+		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: nextRetry: called, RETRY " + (counter + 1) + ", adID=" + getAdID() + ", obj=" + this);
+
 		counter++;
 		
 		nextContainer();
@@ -287,16 +309,18 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 	
 	protected synchronized void startLoading() {
 
+		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: startLoading: called.");
+
 		if (Application_Base.getInstance().isTestMode()) {
 
 			if (!isActive()) {
 
-				throw new IllegalStateException("AdLoadFlow_Base: AdLoadFlow is not active. adID=" + adID + ", obj=" + this);
+				throw new IllegalStateException(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: AdLoadFlow is not active. adID=" + adID + ", obj=" + this);
 			}
 
 			if (isLoading()) {
 
-				throw new IllegalStateException("AdLoadFlow_Base: AdLoadFlow is already in loading mode. adID=" + adID + ", obj=" + this);
+				throw new IllegalStateException(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: AdLoadFlow is already in loading mode. adID=" + adID + ", obj=" + this);
 			}
 		}
 
@@ -305,6 +329,8 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 	
 	
 	protected synchronized void stopLoading() {
+
+		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: stopLoading: called.");
 
 		if (Application_Base.getInstance().isTestMode()) {
 
@@ -334,7 +360,7 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 		@Override
 		public void run() {
 			
-			System.out.println("AdLoadFlow_Base: Retry Job: Running ... ");
+			System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: Retry Job: Running ... ");
 			
 			synchronized (AdLoadFlow_Base.this) {
 				
@@ -351,7 +377,7 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 						loadFailed();
 					}
 				} else {
-					System.out.println("AdLoadFlow_Base: Retry Job: NOT EXECUTED, because: current_retry_job=" + current_retry_job + ", stoped=" + stoped + ", isActive()=" + isActive());
+					System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: Retry Job: NOT EXECUTED, because: current_retry_job=" + current_retry_job + ", stoped=" + stoped + ", isActive()=" + isActive());
 				}
 				
 				current_retry_job = null;	

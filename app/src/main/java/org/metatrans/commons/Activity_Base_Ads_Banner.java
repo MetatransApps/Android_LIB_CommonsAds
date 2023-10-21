@@ -46,6 +46,8 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 		
 		super.onCreate(savedInstanceState);
 
+		System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner: onCreate()");
+
 		//Must be initialized statically, because otherwise if initialized on each create, it doesn't show ads in many cases.
 		//timestamp_last_interstitial_ad_opening = System.currentTimeMillis();
 	}
@@ -55,7 +57,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 	protected void onResume() {
 
 
-		System.out.println("Activity_Base_Ads_Banner: onResume()");
+		System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner: onResume()");
 
 
 		super.onResume();
@@ -91,7 +93,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 	protected void onPause() {
 
 
-		System.out.println("Activity_Base_Ads_Banner: onPause()");
+		System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner: onPause()");
 
 
 		//try-catch ensures no errors, because of ads logic.
@@ -164,13 +166,13 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 				if (!current_adLoadFlow_Banner.isActive()) {
 
-					System.out.println("Activity_Base_Ads_Banner: attachBanner(): resume add");
+					System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner: attachBanner(): resume add");
 
 					current_adLoadFlow_Banner.resume();
 
 				} else {
 
-					System.out.println("Activity_Base_Ads_Banner: attachBanner(): skipping, because Banner is ALREADY active");
+					System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner: attachBanner(): skipping, because Banner is ALREADY active");
 				}
 
 				isBannerAttached = true;
@@ -197,25 +199,25 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 	private void preloadInterstitial() {
 
-		System.out.println("Activity_Base_Ads_Banner.preloadInterstitial(): getInterstitialName()=" + getInterstitialName());
+		System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.preloadInterstitial(): getInterstitialName()=" + getInterstitialName());
 
 		if (getInterstitialName() != null) {
 
-			System.out.println("Activity_Base_Ads_Banner.preloadInterstitial(): called");
+			System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.preloadInterstitial(): called");
 
 			current_adLoadFlow_Interstitial = ((Application_Base_Ads)getApplication()).getAdsManager().getCachedFlow(getInterstitialName());
 
 
 			if (current_adLoadFlow_Interstitial == null) {
 
-				System.out.println("Activity_Base_Ads_Banner.preloadInterstitial(): create Interstitial");
+				System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.preloadInterstitial(): create Interstitial");
 
 				current_adLoadFlow_Interstitial = ((Application_Base_Ads)getApplication()).getAdsManager().createFlow_Interstitial_Mixed(getInterstitialName());
 				((Application_Base_Ads)getApplication()).getAdsManager().putCachedFlow(getInterstitialName(), current_adLoadFlow_Interstitial);
 
 			} else {
 
-				System.out.println("Activity_Base_Ads_Banner.preloadInterstitial(): Interstitial EXISTS");
+				System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.preloadInterstitial(): Interstitial EXISTS");
 
 				if (current_adLoadFlow_Interstitial.isActive()) {
 
@@ -229,11 +231,11 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 	@Override
 	public boolean openInterstitial() {
 
-		System.out.println("Activity_Base_Ads_Banner.openInterstitial(): called");
+		System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.openInterstitial(): called");
 
 		if (!showAds()) {
 
-			System.out.println("Activity_Base_Ads_Banner.openInterstitial(): !showAds()");
+			System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.openInterstitial(): !showAds()");
 
 			return false;
 		}
@@ -242,16 +244,16 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 			if (Application_Base.getInstance().getApp_Me().isPaid()) {
 
-				System.out.println("Activity_Base_Ads_Banner.openInterstitial(): the app is paid - skipping");
+				System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.openInterstitial(): the app is paid - skipping");
 
 				return false;
 			}
 
-			System.out.println("Activity_Base_Ads_Banner.openInterstitial(): timestamp_last_interstitial_ad_opening="
+			System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.openInterstitial(): timestamp_last_interstitial_ad_opening="
 					+ timestamp_last_interstitial_ad_opening);
-			System.out.println("Activity_Base_Ads_Banner.openInterstitial(): readable_time="
+			System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.openInterstitial(): readable_time="
 					+ TimeUtils.getReadableDateTime(timestamp_last_interstitial_ad_opening));
-			System.out.println("Activity_Base_Ads_Banner.openInterstitial(): INTERSTITIAL_INTERVAL="
+			System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.openInterstitial(): INTERSTITIAL_INTERVAL="
 					+ INTERSTITIAL_INTERVAL);
 
 			boolean success = false;
@@ -264,13 +266,13 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 					if (!current_adLoadFlow_Interstitial.isActive()) {
 
-						System.out.println("Activity_Base_Ads_Banner.openInterstitial(): RESUMED");
+						System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.openInterstitial(): RESUMED");
 
 						current_adLoadFlow_Interstitial.resume();
 
 					} else {
 
-						System.out.println("Activity_Base_Ads_Banner: openInterstitial(): skipping, because Interstitial is ALREADY active");
+						System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner: openInterstitial(): skipping, because Interstitial is ALREADY active");
 					}
 
 					success = true;
@@ -280,7 +282,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 			} else {
 
-				System.out.println("Activity_Base_Ads_Banner.openInterstitial(): SKIPPED (to not show too often)");
+				System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.openInterstitial(): SKIPPED (to not show too often)");
 			}
 
 			return success;
@@ -297,25 +299,25 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 	private void preloadRewardedVideo() {
 
-		System.out.println("Activity_Base_Ads_Banner.preloadRewardedVideo(): getRewardedVideoName()=" + getRewardedVideoName());
+		System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.preloadRewardedVideo(): getRewardedVideoName()=" + getRewardedVideoName());
 
 		if (getRewardedVideoName() != null) {
 
-			System.out.println("Activity_Base_Ads_Banner.preloadRewardedVideo(): called");
+			System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.preloadRewardedVideo(): called");
 
 			current_adLoadFlow_RewardedVideo = ((Application_Base_Ads)getApplication()).getAdsManager().getCachedFlow(getRewardedVideoName());
 
 
 			if (current_adLoadFlow_RewardedVideo == null) {
 
-				System.out.println("Activity_Base_Ads_Banner.preloadRewardedVideo(): create RewardedVideo");
+				System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.preloadRewardedVideo(): create RewardedVideo");
 
 				current_adLoadFlow_RewardedVideo = ((Application_Base_Ads)getApplication()).getAdsManager().createFlow_RewardedVideo_Mixed(getRewardedVideoName());
 				((Application_Base_Ads)getApplication()).getAdsManager().putCachedFlow(getRewardedVideoName(), current_adLoadFlow_RewardedVideo);
 
 			} else {
 
-				System.out.println("Activity_Base_Ads_Banner.preloadRewardedVideo(): RewardedVideo EXISTS");
+				System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.preloadRewardedVideo(): RewardedVideo EXISTS");
 
 				if (current_adLoadFlow_RewardedVideo.isActive()) {
 
@@ -323,7 +325,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 				} else {
 
-					System.out.println("Activity_Base_Ads_Banner.preloadRewardedVideo(): current_adLoadFlow_RewardedVideo is null");
+					System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.preloadRewardedVideo(): current_adLoadFlow_RewardedVideo is null");
 				}
 			}
 		}
@@ -333,7 +335,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 	@Override
 	public boolean openRewardedVideo() {
 
-		System.out.println("Activity_Base_Ads_Banner.openRewardedVideo(): called");
+		System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.openRewardedVideo(): called");
 
 		//If the user wants to explicitly reset the time for No ads, it must be possible.
 		/*if (!showAds()) {
@@ -365,20 +367,20 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 				if (!current_adLoadFlow_RewardedVideo.isActive()) {
 
-					System.out.println("Activity_Base_Ads_Banner.openRewardedVideo(): RESUMED");
+					System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.openRewardedVideo(): RESUMED");
 
 					current_adLoadFlow_RewardedVideo.resume();
 
 				} else {
 
-					System.out.println("Activity_Base_Ads_Banner: openRewardedVideo(): skipping, because RewardedVideo is ALREADY active");
+					System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner: openRewardedVideo(): skipping, because RewardedVideo is ALREADY active");
 				}
 
 				return true;
 
 			} else {
 
-				System.out.println("Activity_Base_Ads_Banner.openRewardedVideo(): current_adLoadFlow_RewardedVideo is null");
+				System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.openRewardedVideo(): current_adLoadFlow_RewardedVideo is null");
 			}
 
 		} catch (Throwable t) {

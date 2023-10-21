@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 
+import org.metatrans.commons.DebugTags;
 import org.metatrans.commons.DeviceUtils;
 import org.metatrans.commons.ads.api.IAdsConfiguration;
 import org.metatrans.commons.ads.impl.flow.AdLoadFlow_Banner;
@@ -58,7 +59,7 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
     @Override
     protected View createBanner(final AdLoadFlow_Banner flow) {
 
-        System.out.println("AdsContainer_HomeAds: createBanner called");
+        System.out.println(DebugTags.ADS_CONTAINERS + "AdsContainer_HomeAds: createBanner called");
 
         IConfigurationColours coloursCfg = ConfigurationUtils_Colours.getConfigByID(Application_Base.getInstance().getUserSettings().uiColoursID);
 
@@ -100,7 +101,7 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
     @Override
     protected Object createInterstitial(AdLoadFlow_Interstitial flow) {
 
-        System.out.println("AdsContainer_HomeAds: createInterstitial called");
+        System.out.println(DebugTags.ADS_CONTAINERS + "AdsContainer_HomeAds: createInterstitial called");
 
         Object dummy = new Object();
 
@@ -123,7 +124,7 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
     @Override
     protected Object createRewardedVideo(AdLoadFlow_RewardedVideo flow) {
 
-        System.out.println("AdsContainer_HomeAds: createRewardedVideo called");
+        System.out.println(DebugTags.ADS_CONTAINERS + "AdsContainer_HomeAds: createRewardedVideo called");
 
         Object dummy = new Object();
 
@@ -134,7 +135,7 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
     @Override
     protected void destroyRewardedVideo(Object ad) {
 
-        System.out.println("AdsContainer_HomeAds: destroyRewardedVideo called");
+        System.out.println(DebugTags.ADS_CONTAINERS + "AdsContainer_HomeAds: destroyRewardedVideo called");
 
     }
 
@@ -166,7 +167,7 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
     @Override
     protected void showRewardedVideo(Object ad, AdLoadFlow_RewardedVideo flow) {
 
-        System.out.println("AdsContainer_HomeAds: showRewardedVideo called");
+        System.out.println(DebugTags.ADS_CONTAINERS + "AdsContainer_HomeAds: showRewardedVideo called");
 
         flow.loadOK();
     }
@@ -181,7 +182,7 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
 
     private void request_sync(final View bannerView, final AdLoadFlow_Banner flow) {
 
-        System.out.println("AdsContainer_HomeAds: request_sync for banner called. bannerView=" + bannerView);
+        System.out.println(DebugTags.ADS_CONTAINERS + "AdsContainer_HomeAds: request_sync for banner called. bannerView=" + bannerView);
 
         //bannerView.setVisibility(View.VISIBLE);
 
@@ -204,24 +205,24 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
 
     private void request_sync(AdLoadFlow_Interstitial flow) {
 
-        System.out.println("AdsContainer_HomeAds: request_sync for interstitial: called");
+        System.out.println(DebugTags.ADS_CONTAINERS + "AdsContainer_HomeAds: request_sync for interstitial: called");
 
         int rand = (int) (Math.random() * 100d);
 
         Activity currentActivity = Application_Base.getInstance().getCurrentActivity();
         if (currentActivity == null) {
-            System.out.println("AdsContainer_HomeAds: request_sync for interstitial: EXIT because current activity is null");
+            System.out.println(DebugTags.ADS_CONTAINERS + "AdsContainer_HomeAds: request_sync for interstitial: EXIT because current activity is null");
             flow.loadFailed();
             return;
         }
 
         final IHomeAdInfo promoted = getNextHomeAdInfo();
 
-        System.out.println("AdsContainer_HomeAds: request_sync for interstitial: promoted=" + promoted);
+        System.out.println(DebugTags.ADS_CONTAINERS + "AdsContainer_HomeAds: request_sync for interstitial: promoted=" + promoted);
 
         if (rand <= 50 || promoted == null || !DeviceUtils.isConnected()) {
 
-            System.out.println("AdsContainer_HomeAds: request_sync for interstitial: show APP_LIST");
+            System.out.println(DebugTags.ADS_CONTAINERS + "AdsContainer_HomeAds: request_sync for interstitial: show APP_LIST");
 
             Intent intent = createInterstitialIntent(currentActivity);
 
@@ -252,7 +253,7 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
             }
         } else {
 
-            System.out.println("AdsContainer_HomeAds: request_sync promoted=" + promoted);
+            System.out.println(DebugTags.ADS_CONTAINERS + "AdsContainer_HomeAds: request_sync promoted=" + promoted);
 
             if (promoted != null) {
 
