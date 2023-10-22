@@ -14,6 +14,7 @@ public interface IAdsProviders {
 	public static final int ID_ADMOB_GPS		= 8;
 	public static final int ID_APPBRAIN_APPLIFT = 9;
 	public static final int ID_HOME_ADS			= 10;
-
 	public static final int ID_FACEBOOK_ADS		= 11;
+	public static final int ID_UNITY_ADS		= 12;
+
 }
