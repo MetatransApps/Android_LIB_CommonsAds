@@ -21,4 +21,7 @@ public interface IAdsConfiguration {
 	public String[] getUnitIDs_RewardedVideo();
 
 	public String getUnitID(String adID);
+
+	//TODO: GAME ID
+	public String getApplicationID();
 }

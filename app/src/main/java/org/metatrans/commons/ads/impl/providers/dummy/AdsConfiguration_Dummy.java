@@ -18,6 +18,13 @@ public class AdsConfiguration_Dummy implements IAdsConfiguration {
 
 
 	@Override
+	public String getApplicationID() {
+
+		throw new UnsupportedOperationException();
+	}
+
+
+	@Override
 	public String[] getUnitIDs_Banners() {
 
 		return new String[] {"FIXED_STRING_getUnitIDs_Banners"};
