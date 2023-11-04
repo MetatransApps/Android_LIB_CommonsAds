@@ -136,10 +136,15 @@ public abstract class Activity_Menu_Base extends Activity_Base_Ads_Banner {
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			
 			Runnable action = entries.get(position).getAction();
-			
+
+			Application_Base.getInstance().getSFXManager().playSound(R.raw.sfx_button_pressed_2);
+
 			if (action == null) {
+
 				Toast_Base.showToast_InCenter_Long(Activity_Menu_Base.this, "Clicked menu item with id=" + id + ", but no action found ...");
+
 			} else {
+
 				action.run();
 			}
 		}
