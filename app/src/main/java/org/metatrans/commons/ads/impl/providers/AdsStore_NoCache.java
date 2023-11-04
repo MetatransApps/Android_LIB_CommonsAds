@@ -4,6 +4,7 @@ package org.metatrans.commons.ads.impl.providers;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.metatrans.commons.DeviceUtils;
 import org.metatrans.commons.ads.impl.flow.AdLoadFlow_Banner;
 import org.metatrans.commons.ads.impl.flow.AdLoadFlow_Interstitial;
 import org.metatrans.commons.ads.impl.flow.AdLoadFlow_RewardedVideo;
@@ -152,10 +153,14 @@ public class AdsStore_NoCache {
 			adsContainer.destroyRewardedVideo(rewardedAd);
 		}
 
-		rewardedAd = adsContainer.createRewardedVideo(flow);
+		//Pre load only if connected
+		if (DeviceUtils.isConnected()) {
 
-		System.out.println("AdsStore_NoCache.returnRewardedVideo(...): Pre-load RewardedVideo, rewardedAd=" + rewardedAd);
+			rewardedAd = adsContainer.createRewardedVideo(flow);
 
-		ads.put(flow.getAdID(), rewardedAd);
+			System.out.println("AdsStore_NoCache.returnRewardedVideo(...): Pre-load RewardedVideo, rewardedAd=" + rewardedAd);
+
+			ads.put(flow.getAdID(), rewardedAd);
+		}
 	}
 }
