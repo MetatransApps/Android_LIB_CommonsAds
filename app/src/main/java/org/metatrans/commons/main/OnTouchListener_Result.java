@@ -2,6 +2,8 @@ package org.metatrans.commons.main;
 
 
 import org.metatrans.commons.Alerts_Base;
+import org.metatrans.commons.ads.R;
+import org.metatrans.commons.app.Application_Base;
 import org.metatrans.commons.main.View_Result;
 import org.metatrans.commons.marketing.Activity_Marketing_AppList;
 
@@ -117,9 +119,13 @@ public class OnTouchListener_Result implements OnTouchListener {
 			view.deselectButton_New();
 			
 			AlertDialog.Builder adb = Alerts_Base.createAlertDialog_LoseGame(view.getContext(),
+
 					new DialogInterface.OnClickListener() {
+
 						public void onClick(DialogInterface dialog, int which) {
-							
+
+							Application_Base.getInstance().getSFXManager().playSound(R.raw.sfx_button_pressed_1);
+
 							((Activity_Result_Base_Ads)view.getContext()).startNewGame();
 							((Activity_Result_Base_Ads)view.getContext()).finish();
 							
