@@ -35,7 +35,7 @@ public abstract class Activity_Menu_Base extends Activity_Base_Ads_Banner {
 	public void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
-		
+
 		try {
 			
 			entries = getEntries();
