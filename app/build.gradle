@@ -6,11 +6,11 @@ android {
 
     namespace "org.metatrans.commons.ads"
 
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     defaultConfig {
         minSdkVersion 23
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 103
         versionName "1.0.3"
 
