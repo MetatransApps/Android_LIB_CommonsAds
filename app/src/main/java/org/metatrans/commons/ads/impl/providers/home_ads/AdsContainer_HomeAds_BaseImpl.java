@@ -128,6 +128,8 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
 
         Object dummy = new Object();
 
+        flow.loadFailed();
+
         return dummy;
     }
 
@@ -168,8 +170,6 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
     protected void showRewardedVideo(Object ad, AdLoadFlow_RewardedVideo flow) {
 
         System.out.println(DebugTags.ADS_CONTAINERS + "AdsContainer_HomeAds: showRewardedVideo called");
-
-        flow.loadOK();
     }
 
 

@@ -269,7 +269,7 @@ public abstract class AdsContainer_Base implements IAdsContainer {
 		//Create the Ad at the first call
 		final Object result = adsStore_Cache.getRewardedVideo(flow);
 
-		System.out.println("AdsContainer_Base.initRewardedVideo(flow) : This container " + result + " was initialized for the interstitial ads.");
+		System.out.println("AdsContainer_Base.initRewardedVideo(flow) : This container " + result + " was initialized for the rewarded video ads.");
 	}
 
 
@@ -300,6 +300,8 @@ public abstract class AdsContainer_Base implements IAdsContainer {
 			public void run() {
 
 				try {
+
+					System.out.println("AdsContainer_Base.requestRewardedVideo(flow) : show");
 
 					showRewardedVideo(result, flow);
 

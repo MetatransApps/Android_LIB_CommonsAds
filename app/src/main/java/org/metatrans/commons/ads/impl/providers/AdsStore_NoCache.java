@@ -148,19 +148,19 @@ public class AdsStore_NoCache {
 
 		if (rewardedAd != null) {
 
-			System.out.println("AdsStore_NoCache: returned OBJ = " + rewardedAd);
+			System.out.println("AdsStore_NoCache: returnRewardedVideo returned OBJ = " + rewardedAd);
 
 			adsContainer.destroyRewardedVideo(rewardedAd);
 		}
 
 		//Pre load only if connected
-		if (DeviceUtils.isConnected()) {
+		/*if (DeviceUtils.isConnected()) {
 
 			rewardedAd = adsContainer.createRewardedVideo(flow);
 
 			System.out.println("AdsStore_NoCache.returnRewardedVideo(...): Pre-load RewardedVideo, rewardedAd=" + rewardedAd);
 
 			ads.put(flow.getAdID(), rewardedAd);
-		}
+		}*/
 	}
 }
