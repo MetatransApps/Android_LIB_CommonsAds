@@ -120,7 +120,7 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 	
 	@Override
 	public synchronized void resume() {
-		
+
 		long mem_mb = DeviceUtils.getAvailableMemory_InMB();
 		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: AD FLOW: resume - " + getAdID() + " available memory is " + mem_mb + " MB");
 
@@ -302,8 +302,15 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 		counter++;
 		
 		nextContainer();
-		
-		retry();
+
+		if (current_container == null) {
+
+			pause();
+
+		} else {
+
+			retry();
+		}
 	}
 	
 	

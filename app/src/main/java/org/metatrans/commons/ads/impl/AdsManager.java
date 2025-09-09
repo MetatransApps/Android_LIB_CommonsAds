@@ -20,6 +20,7 @@ import org.metatrans.commons.ads.impl.flow.AdLoadFlow_Interstitial;
 import org.metatrans.commons.ads.impl.flow.AdLoadFlow_RewardedVideo;
 import org.metatrans.commons.ads.impl.flow.IAdLoadFlow;
 import org.metatrans.commons.ads.impl.sequence.AdsContainerSequence_Cycle;
+import org.metatrans.commons.ads.impl.sequence.AdsContainerSequence_OneTime;
 import org.metatrans.commons.ads.impl.sequence.AdsContainerSequence_PermanentSingleton;
 import org.metatrans.commons.ads.impl.sequence.IAdsContainerSequence;
 import org.metatrans.commons.ads.impl.stat.AdStorageUtils;
@@ -466,7 +467,7 @@ public class AdsManager {
 		
 		System.out.println("ADS ORDER (Banner)" + adsContainers);
 		
-		return createFlow_Banner(frame, adID, gravity, new AdsContainerSequence_Cycle(adsContainers));
+		return createFlow_Banner(frame, adID, gravity, new AdsContainerSequence_OneTime(adsContainers));
 	}
 
 	
@@ -545,7 +546,7 @@ public class AdsManager {
 		
 		System.out.println("ADS ORDER (Interstitial)" + adsContainers);
 		
-		return createFlow_Interstitial(adID, new AdsContainerSequence_Cycle(adsContainers));
+		return createFlow_Interstitial(adID, new AdsContainerSequence_OneTime(adsContainers));
 	}
 
 
@@ -573,7 +574,7 @@ public class AdsManager {
 
 		System.out.println("ADS ORDER (Interstitial)" + adsContainers);
 
-		return createFlow_RewardedVideo(adID, new AdsContainerSequence_Cycle(adsContainers));
+		return createFlow_RewardedVideo(adID, new AdsContainerSequence_OneTime(adsContainers));
 	}
 
 	/*private IAdLoadFlow createFlow_Interstitial(int adsProviderID,  String adID) {
