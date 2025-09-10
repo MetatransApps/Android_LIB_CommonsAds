@@ -182,7 +182,7 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 			stopLoading();
 		}
 		
-		if (!isDetached /*&& !hasOverlayScreen()*/) { 
+		if (!isDetached) {
 			cleanCurrent();
 		}
 		
@@ -222,7 +222,7 @@ public abstract class AdLoadFlow_Base implements IAdLoadFlow {
 		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Base: loadOK: called");
 
 		stopLoading();
-		
+
 		AdData adData = adsData.getAdData(getCurrentContainer().getProviderID());
 		AdDataUtils.addSuccess(adData, System.currentTimeMillis() - time_current_container_start);
 	}

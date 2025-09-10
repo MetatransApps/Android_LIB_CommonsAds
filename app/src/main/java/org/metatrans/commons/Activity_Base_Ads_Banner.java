@@ -18,11 +18,9 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 
 	//1 minute if productive mode and smaller for testing
-	private static final int INTERSTITIAL_INTERVAL 			= (DEBUG ? (5 * 1000) : (60 * 1000));
+	private static final int INTERSTITIAL_INTERVAL 			= (DEBUG ? (5 * 1000) : (50 * 1000));
 
 	private static final int REWARD_INTERVAL 				= 7 * INTERSTITIAL_INTERVAL;
-
-	private static final int WAITING_TIME_FOR_REWARDED_AD 	= (int) (3.5 * 1000); //3.5 seconds
 
 	private static volatile long timestamp_last_interstitial_ad_opening = System.currentTimeMillis() + INTERSTITIAL_INTERVAL;
 
@@ -70,10 +68,6 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 				attachBanner();
 			}
-
-			preloadInterstitial();
-
-			preloadRewardedVideo();
 
 		} catch (Throwable t) {
 
@@ -197,32 +191,27 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 	}
 
 
-	private void preloadInterstitial() {
+	private void loadInterstitial() {
 
-		System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.preloadInterstitial(): getInterstitialName()=" + getInterstitialName());
+		System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.loadInterstitial(): getInterstitialName()=" + getInterstitialName());
 
 		if (getInterstitialName() != null) {
 
-			System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.preloadInterstitial(): called");
+			System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.loadInterstitial(): called");
 
 			current_adLoadFlow_Interstitial = ((Application_Base_Ads)getApplication()).getAdsManager().getCachedFlow(getInterstitialName());
 
 
 			if (current_adLoadFlow_Interstitial == null) {
 
-				System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.preloadInterstitial(): create Interstitial");
+				System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.loadInterstitial(): create Interstitial");
 
 				current_adLoadFlow_Interstitial = ((Application_Base_Ads)getApplication()).getAdsManager().createFlow_Interstitial_Mixed(getInterstitialName());
 				((Application_Base_Ads)getApplication()).getAdsManager().putCachedFlow(getInterstitialName(), current_adLoadFlow_Interstitial);
 
 			} else {
 
-				System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.preloadInterstitial(): Interstitial EXISTS");
-
-				if (current_adLoadFlow_Interstitial.isActive()) {
-
-					current_adLoadFlow_Interstitial.pause();
-				}
+				System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.loadInterstitial(): Interstitial EXISTS");
 			}
 		}
 	}
@@ -262,7 +251,15 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 			if (now >= timestamp_last_interstitial_ad_opening + INTERSTITIAL_INTERVAL) {
 
+
+				loadInterstitial();
+
+
 				if (current_adLoadFlow_Interstitial != null) {
+
+
+					Toast_Base.showToast_InCenter(this, "Loading Ad ... please wait.");
+
 
 					if (!current_adLoadFlow_Interstitial.isActive()) {
 
@@ -276,9 +273,9 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 					}
 
 					success = true;
-				}
 
-				timestamp_last_interstitial_ad_opening = now;
+					timestamp_last_interstitial_ad_opening = now;
+				}
 
 			} else {
 
@@ -297,36 +294,27 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 	}
 
 
-	private void preloadRewardedVideo() {
+	private void loadRewardedVideo() {
 
-		System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.preloadRewardedVideo(): getRewardedVideoName()=" + getRewardedVideoName());
+		System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.loadRewardedVideo(): getRewardedVideoName()=" + getRewardedVideoName());
 
 		if (getRewardedVideoName() != null) {
 
-			System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.preloadRewardedVideo(): called");
+			System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.loadRewardedVideo(): called");
 
 			current_adLoadFlow_RewardedVideo = ((Application_Base_Ads)getApplication()).getAdsManager().getCachedFlow(getRewardedVideoName());
 
 
 			if (current_adLoadFlow_RewardedVideo == null) {
 
-				System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.preloadRewardedVideo(): create RewardedVideo");
+				System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.loadRewardedVideo(): create RewardedVideo");
 
 				current_adLoadFlow_RewardedVideo = ((Application_Base_Ads)getApplication()).getAdsManager().createFlow_RewardedVideo_Mixed(getRewardedVideoName());
 				((Application_Base_Ads)getApplication()).getAdsManager().putCachedFlow(getRewardedVideoName(), current_adLoadFlow_RewardedVideo);
 
 			} else {
 
-				System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.preloadRewardedVideo(): RewardedVideo EXISTS");
-
-				if (current_adLoadFlow_RewardedVideo.isActive()) {
-
-					current_adLoadFlow_RewardedVideo.pause();
-
-				} else {
-
-					System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.preloadRewardedVideo(): current_adLoadFlow_RewardedVideo is null");
-				}
+				System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.loadRewardedVideo(): RewardedVideo EXISTS");
 			}
 		}
 	}
@@ -355,15 +343,23 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 				return false;
 			}*/
 
-			long waiting_time = System.currentTimeMillis() - (timestamp_last_resumed + WAITING_TIME_FOR_REWARDED_AD);
+			/*long waiting_time = System.currentTimeMillis() - (timestamp_last_resumed + WAITING_TIME_FOR_REWARDED_AD);
 			if (waiting_time < 0) {
 
 				Toast_Base.showToast_InCenter_Short(this, (-waiting_time) + " ms");
 
 				return false;
-			}
+			}*/
+
+
+			loadRewardedVideo();
+
 
 			if (current_adLoadFlow_RewardedVideo != null) {
+
+
+				Toast_Base.showToast_InCenter(this, "Loading Ad ... please wait.");
+
 
 				if (!current_adLoadFlow_RewardedVideo.isActive()) {
 

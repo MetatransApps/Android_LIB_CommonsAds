@@ -13,12 +13,12 @@ import java.util.concurrent.ExecutorService;
 public class AdLoadFlow_RewardedVideo extends AdLoadFlow_Base {
 
 
-	public AdLoadFlow_RewardedVideo(String _adID, IAdsContainerSequence _containers_sequance, AdsData _adsData
-			, Handler _uiHandler, ExecutorService _executor) {
+	public AdLoadFlow_RewardedVideo(String _adID, IAdsContainerSequence _containers_sequence, AdsData _adsData,
+									Handler _uiHandler, ExecutorService _executor) {
 
-		super(_adID, _containers_sequance, _adsData, _uiHandler, _executor);
+		super(_adID, _containers_sequence, _adsData, _uiHandler, _executor);
 
-		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_RewardedVideo.constructor(): _containers_sequance=" + _containers_sequance.getAdsContainers());
+		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_RewardedVideo.constructor(): _containers_sequence=" + _containers_sequence.getAdsContainers());
 	}
 	
 	
@@ -29,7 +29,7 @@ public class AdLoadFlow_RewardedVideo extends AdLoadFlow_Base {
 
 		super.retry();
 
-		getCurrentContainer().requestRewardedVideo(this);
+		getCurrentContainer().initRewardedVideo(this);
 	}
 	
 	
@@ -38,7 +38,8 @@ public class AdLoadFlow_RewardedVideo extends AdLoadFlow_Base {
 
 		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_RewardedVideo.cleanCurrent(): called");
 
-		getCurrentContainer().removeRewardedVideo(getAdID(), this);
+		if (getCurrentContainer() != null) getCurrentContainer().removeRewardedVideo(getAdID(), this);
+
 		super.cleanCurrent();
 	}
 
@@ -49,6 +50,8 @@ public class AdLoadFlow_RewardedVideo extends AdLoadFlow_Base {
 		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_RewardedVideo.loadOK(): called");
 
 		super.loadOK();
+
+		getCurrentContainer().requestRewardedVideo(this);
 
 		pause();
 	}

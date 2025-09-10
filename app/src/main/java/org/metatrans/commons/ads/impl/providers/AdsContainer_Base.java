@@ -228,7 +228,9 @@ public abstract class AdsContainer_Base implements IAdsContainer {
 			public void run() {
 				
 				try {
-					
+
+					System.out.println("AdsContainer_Base.requestInterstitial(flow) : show");
+
 					showInterstitial(result, flow);
 					
 				} catch(Exception e) {

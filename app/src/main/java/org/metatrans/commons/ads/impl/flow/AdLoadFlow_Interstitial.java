@@ -13,12 +13,12 @@ import android.os.Handler;
 public class AdLoadFlow_Interstitial extends AdLoadFlow_Base {
 	
 	
-	public AdLoadFlow_Interstitial(String _adID, IAdsContainerSequence _containers_sequance, AdsData _adsData
-			, Handler _uiHandler, ExecutorService _executor) {
+	public AdLoadFlow_Interstitial(String _adID, IAdsContainerSequence _containers_sequence, AdsData _adsData,
+								   Handler _uiHandler, ExecutorService _executor) {
 
-		super(_adID, _containers_sequance, _adsData, _uiHandler, _executor);
+		super(_adID, _containers_sequence, _adsData, _uiHandler, _executor);
 
-		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Interstitial.constructor(): _containers_sequance=" + _containers_sequance.getAdsContainers());
+		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Interstitial.constructor(): _containers_sequence=" + _containers_sequence.getAdsContainers());
 	}
 	
 	
@@ -29,7 +29,7 @@ public class AdLoadFlow_Interstitial extends AdLoadFlow_Base {
 
 		super.retry();
 
-		getCurrentContainer().requestInterstitial(this);
+		getCurrentContainer().initInterstitial(this);
 	}
 	
 	
@@ -38,7 +38,7 @@ public class AdLoadFlow_Interstitial extends AdLoadFlow_Base {
 
 		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Interstitial.cleanCurrent(): called");
 
-		getCurrentContainer().removeInterstitial(getAdID(), this);
+		if (getCurrentContainer() != null) getCurrentContainer().removeInterstitial(getAdID(), this);
 
 		super.cleanCurrent();
 	}
@@ -49,6 +49,8 @@ public class AdLoadFlow_Interstitial extends AdLoadFlow_Base {
 		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_Interstitial.loadOK(): called");
 
 		super.loadOK();
+
+		getCurrentContainer().requestInterstitial(this);
 
 		pause();
 	}

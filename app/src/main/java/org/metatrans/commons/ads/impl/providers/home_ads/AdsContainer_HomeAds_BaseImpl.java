@@ -99,6 +99,17 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
 
 
     @Override
+    public void initInterstitial(AdLoadFlow_Interstitial flow) {
+
+        System.out.println("AdsContainer_HomeAds_BaseImpl.initInterstitial(flow) : called");
+
+        //Do nothing to prevent entry to be stored in the cache
+
+        flow.loadOK();
+    }
+
+
+    @Override
     protected Object createInterstitial(AdLoadFlow_Interstitial flow) {
 
         System.out.println(DebugTags.ADS_CONTAINERS + "AdsContainer_HomeAds: createInterstitial called");
@@ -128,8 +139,6 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
 
         Object dummy = new Object();
 
-        flow.loadFailed();
-
         return dummy;
     }
 
@@ -138,7 +147,6 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
     protected void destroyRewardedVideo(Object ad) {
 
         System.out.println(DebugTags.ADS_CONTAINERS + "AdsContainer_HomeAds: destroyRewardedVideo called");
-
     }
 
 
@@ -156,13 +164,29 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
 
     @Override
     protected void showInterstitial(Object dummy, AdLoadFlow_Interstitial flow) {
+
         request_sync(flow);
     }
 
 
     @Override
+    public void requestInterstitial(final AdLoadFlow_Interstitial flow) {
+
+        request_sync(flow);
+    }
+
+    @Override
     protected void showInterstitial(Object ad) {
         throw new UnsupportedOperationException();
+    }
+
+
+    @Override
+    public void initRewardedVideo(AdLoadFlow_RewardedVideo flow) {
+
+        System.out.println("AdsContainer_HomeAds_BaseImpl.initRewardedVideo(flow) : called");
+
+        // Do nothing: prevent storing any rewarded entry for HomeAds during init.
     }
 
 
@@ -230,9 +254,7 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
 
                 currentActivity.startActivity(intent);
 
-                flow.loadOK();
-
-                //flow.cleanCurrent();
+                //flow.loadOK();
 
                 try {
 
@@ -259,7 +281,7 @@ public abstract class AdsContainer_HomeAds_BaseImpl extends AdsContainer_Base  {
 
                 openTarget(promoted);
 
-                flow.loadOK();
+                //flow.loadOK();
 
                 try {
 
