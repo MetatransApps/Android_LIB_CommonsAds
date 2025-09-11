@@ -22,12 +22,10 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 	private static final int REWARD_INTERVAL 				= 7 * INTERSTITIAL_INTERVAL;
 
+
 	private static volatile long timestamp_last_interstitial_ad_opening = System.currentTimeMillis() + INTERSTITIAL_INTERVAL;
 
 	public static volatile long timestamp_last_rewarded_ad_opening;
-
-	//Used for waiting some time to load the Rewarded Video, because if it is clicked too fast, it doesn't opened.
-	private static volatile long timestamp_last_resumed;
 
 
 	private IAdLoadFlow current_adLoadFlow_Banner;
@@ -73,8 +71,6 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 			t.printStackTrace();
 		}
-
-		timestamp_last_resumed = System.currentTimeMillis();
 	}
 
 	private boolean showAds() {
