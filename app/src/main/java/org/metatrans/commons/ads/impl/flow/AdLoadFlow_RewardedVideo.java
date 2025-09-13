@@ -4,6 +4,7 @@ package org.metatrans.commons.ads.impl.flow;
 import android.os.Handler;
 
 import org.metatrans.commons.DebugTags;
+import org.metatrans.commons.IEarnedRewardCallback;
 import org.metatrans.commons.ads.impl.sequence.IAdsContainerSequence;
 import org.metatrans.commons.ads.impl.stat.model.AdsData;
 
@@ -13,6 +14,9 @@ import java.util.concurrent.ExecutorService;
 public class AdLoadFlow_RewardedVideo extends AdLoadFlow_Base {
 
 
+	private IEarnedRewardCallback callback;
+
+
 	public AdLoadFlow_RewardedVideo(String _adID, IAdsContainerSequence _containers_sequence, AdsData _adsData,
 									Handler _uiHandler, ExecutorService _executor) {
 
@@ -20,8 +24,20 @@ public class AdLoadFlow_RewardedVideo extends AdLoadFlow_Base {
 
 		System.out.println(DebugTags.ADS_FLOWS + "AdLoadFlow_RewardedVideo.constructor(): _containers_sequence=" + _containers_sequence.getAdsContainers());
 	}
-	
-	
+
+
+	public IEarnedRewardCallback getEarnedRewardCallback() {
+
+		return callback;
+	}
+
+
+	public void setEarnedRewardCallback(IEarnedRewardCallback _callback) {
+
+		callback = _callback;
+	}
+
+
 	@Override
 	protected void retry() {
 

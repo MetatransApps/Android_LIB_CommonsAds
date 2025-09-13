@@ -3,6 +3,7 @@ package org.metatrans.commons;
 
 import static org.metatrans.commons.ads.BuildConfig.DEBUG;
 
+import org.metatrans.commons.ads.impl.flow.AdLoadFlow_RewardedVideo;
 import org.metatrans.commons.ads.impl.flow.IAdLoadFlow;
 import org.metatrans.commons.app.Application_Base;
 import org.metatrans.commons.app.Application_Base_Ads;
@@ -32,7 +33,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 	private IAdLoadFlow current_adLoadFlow_Interstitial;
 
-	private IAdLoadFlow current_adLoadFlow_RewardedVideo;
+	private AdLoadFlow_RewardedVideo current_adLoadFlow_RewardedVideo;
 
 	private boolean isBannerAttached;
 
@@ -298,14 +299,16 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 			System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.loadRewardedVideo(): called");
 
-			current_adLoadFlow_RewardedVideo = ((Application_Base_Ads)getApplication()).getAdsManager().getCachedFlow(getRewardedVideoName());
+			current_adLoadFlow_RewardedVideo = (AdLoadFlow_RewardedVideo)
+					((Application_Base_Ads)getApplication()).getAdsManager().getCachedFlow(getRewardedVideoName());
 
 
 			if (current_adLoadFlow_RewardedVideo == null) {
 
 				System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.loadRewardedVideo(): create RewardedVideo");
 
-				current_adLoadFlow_RewardedVideo = ((Application_Base_Ads)getApplication()).getAdsManager().createFlow_RewardedVideo_Mixed(getRewardedVideoName());
+				current_adLoadFlow_RewardedVideo = (AdLoadFlow_RewardedVideo)
+						((Application_Base_Ads)getApplication()).getAdsManager().createFlow_RewardedVideo_Mixed(getRewardedVideoName());
 				((Application_Base_Ads)getApplication()).getAdsManager().putCachedFlow(getRewardedVideoName(), current_adLoadFlow_RewardedVideo);
 
 			} else {
@@ -317,7 +320,7 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 
 	@Override
-	public boolean openRewardedVideo() {
+	public boolean openRewardedVideo(IEarnedRewardCallback callback) {
 
 		System.out.println(DebugTags.ADS_ACTIVITY + "Activity_Base_Ads_Banner.openRewardedVideo(): called");
 
@@ -353,9 +356,9 @@ public abstract class Activity_Base_Ads_Banner extends org.metatrans.commons.Act
 
 			if (current_adLoadFlow_RewardedVideo != null) {
 
+				current_adLoadFlow_RewardedVideo.setEarnedRewardCallback(callback);
 
 				Toast_Base.showToast_InCenter(this, "Loading Ad ... please wait.");
-
 
 				if (!current_adLoadFlow_RewardedVideo.isActive()) {
 
